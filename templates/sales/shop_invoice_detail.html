@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+{% block shop_sales %}active{% endblock %}
+{% block shop_invoice_list %}active{% endblock %}
+{% load i18n %}
+
+{% load staticfiles %}
+{% block content %}
+
+<style media="print">
+    @page {
+        size: 80mm auto;
+        margin: 0;
+    }
+
+    body {
+        width: 80mm !important;
+        margin: 0 !important;
+        padding: 5mm !important;
+        font-family: 'Courier New', monospace;
+        font-size: 11px;
+        line-height: 1.2;
+        color: #000;
+    }
+
+    .no-print, .print-invoice-btn, .breadcrumb,
+    .box-header, .box-footer, .content-wrapper {
+        display: none !important;
+    }
+
+    .print-invoice {
+        width: 100%;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 5px;
+    }
+
+    th, td {
+        padding: 2px 0;
+        text-align: left;
+    }
+
+    hr {
+        border: none;
+        border-top: 1px dashed #000;
+        margin: 5px 0;
+    }
+
+    .thermal-header {
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 5px;
+    }
+
+    .thermal-cut {
+        height: 10px;
+        margin-top: 10px;
+        border-top: 1px dashed #000;
+        page-break-after: always;
+    }
+</style>
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <a href="{% url 'sales:shop_invoice_create' %}">
+            <button type="button" id="invoice" class="btn btn-primary">{% trans "Create Invoice" %}</button>
+        </a>
+
+        <button type="button" class="btn btn-primary print-invoice-btn" onclick="printThermalInvoice()">
+            {% trans "Print Invoice" %}
+        </button>
+
+        <ol class="breadcrumb">
+            <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> {% trans "Home" %}</a></li>
+            <li><a href="{% url 'sales:shop_invoice_list' %}">{% trans "Invoice List" %}</a></li>
+        </ol>
+    </section>
+
+    <section class="content">
+        <div class="box">
+            <div class="box-body">
+                <div id="print-invoice" class="print-invoice">
+                    <div class="thermal-header">
+                        <h3>{% trans "Reydi Gull Traders" %}</h3>
+                        <p><strong>{% trans "INVOICE" %}</strong></p>
+                    </div>
+
+                    {% if invoice.customer %}
+                        <p><strong>{% trans "Customer" %}:</strong> {{ invoice.customer.name|upper }}</p>
+                        <p><strong>{% trans "Mobile" %}:</strong> {{ invoice.customer.mobile }}</p>
+                        <p><strong>{% trans "CNIC" %}:</strong> {{ invoice.customer.cnic }}</p>
+                    {% endif %}
+
+                    <p><strong>{% trans "Date" %}:</strong> {{ invoice.date|date:"d-m-Y" }}</p>
+                    <p><strong>{% trans "Payment" %}:</strong> {{ invoice.payment_type|upper }}</p>
+                    <p><strong>{% trans "Receipt" %} #:</strong> {{ invoice.id|stringformat:"07d" }}</p>
+
+                    <hr>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 50%;">{% trans "Item" %}</th>
+                                <th></th>
+                                <th style="width: 15%;">{% trans "Quantity" %}</th>
+                                <th></th>
+                                <th style="width: 35%;">{% trans "Total" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in invoice.shop_invoice_purchased.all %}
+                                <tr>
+                                    <td>{{ item.shop_item.original_product.name|upper }} {{ item.shop_item.original_product.category|upper }}</td>
+                                    
+                                    <td>{{ item.quantity|floatformat:-2 }}</td>
+                                    <th></th>
+                                    <td>{{ item.purchase_amount|floatformat:-2 }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <hr>
+
+                    <table>
+                        <tr>
+                            <td><strong>{% trans "Total Qty" %}:</strong></td>
+                            <td>{{ invoice.total_quantity }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>{% trans "Grand Total" %}:</strong></td>
+                            <td>{{ invoice.grand_total|floatformat:-2 }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>{% trans "Cash Payment" %}:</strong></td>
+                            <td>{{ invoice.cash_payment|floatformat:-2 }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>{% trans "Received Amount" %}:</strong></td>
+                            <td>{{ invoice.paid_amount|floatformat:-2 }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>{% trans "Remaining Amount" %}:</strong></td>
+                            <td>{{ invoice.remaining_payment|floatformat:-2 }}</td>
+                        </tr>
+                    </table>
+
+                    {% if invoice.barcode_image %}
+                        <div class="text-center" style="margin-top: 8px;">
+                            <img src="{{ invoice.barcode_image.url }}" alt="Invoice Barcode" width="180" height="50">
+                        </div>
+                    {% endif %}
+
+                    <div class="text-center" style="margin-top: 8px;">
+                                                <span><b>User:</b> {{request.user.username|title}}</span>
+                        <p><strong>{% trans "THANK YOU FOR YOUR BUSINESS!" %}</strong></p>
+                    </div>
+
+                    <div class="thermal-cut"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+function printThermalInvoice() {
+    const content = document.getElementById('print-invoice').innerHTML;
+    const printWindow = window.open('', '', 'width=400,height=600');
+
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Invoice #{{ invoice.id }}</title>
+            <style>
+                @page { size: 80mm auto; margin: 0; }
+                body {
+                    width: 80mm !important;
+                    margin: 0;
+                    padding: 5mm;
+                    font-family: 'Courier New', monospace;
+                    font-size: 11px;
+                    line-height: 1.2;
+                }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { padding: 2px 0; }
+                .thermal-cut { height: 10px; page-break-after: always; border-top: 1px dashed #000; }
+            </style>
+        </head>
+        <body onload="window.print(); setTimeout(() => window.close(), 300);">
+            ${content}
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+}
+
+document.getElementById('invoice').addEventListener('click', function () {
+    const btn = this;
+    btn.innerHTML = '<i class="fa fa-circle-o-notch fa-spin"></i> Processing';
+    setTimeout(() => { btn.innerHTML = 'Create Invoice'; }, 5000);
+});
+</script>
+
+{% endblock %}

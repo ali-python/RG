@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block shop_product %}active{% endblock %}
+{% block shop_add_product_list %}active{% endblock %}
+{% block content %}
+{% load i18n %}
+
+{% load static %}
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <ol class="breadcrumb">
+            <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> {% trans "Home" %}</a></li>
+            <li class="active">{% trans "Shop Product List" %}</li>
+        </ol>
+    </section>
+    <br>
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12 form-group">
+                <div class="box">
+                    <div class="row">
+                        <h4 class="text-center"><b>{% trans "Shop Product List" %}</b></h4>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-4 pull-left">
+                                <input type="text" class="form-control name_search" placeholder="Search by Name ..." >
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control category_search" placeholder="Search by Category ...">
+                            </div>
+                            <div class="col-md-2 pull-right">
+                                <button class="form-control btn btn-primary search">Search</button>
+                            </div>
+                            <br><br>
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="table-responsive">
+                            <table class="table align-items-center table-striped table-bordered table-hover">
+                                <thead class="thead-dark">
+                                <tr>
+                                    <th>{% trans "Name" %}</th>
+                                    <th>{% trans "Category" %}</th>
+                                    <!-- <th>Notify Quantity</th> -->
+                                    <th>{% trans "Total Quantity" %}</th>
+                                    <th>{% trans "Available Item" %}</th>
+                                    <th class="text-center">{% trans "Action" %}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for product in object_list %}
+                                <tr>
+                                    <!-- {% load humanize %} -->
+                                    <td>{{product.original_product.name|title}}</td>
+                                    <td>{{product.original_product.category|title}}</td>
+                                    <!-- <td>{{product.notify_qty|floatformat:-2}}</td> -->
+                                    <td>{{product.total_items|floatformat:-2}}</td>
+                                    <td>{{product.product_available_items|floatformat:-2}}</td>
+                                    <td class="text-center">
+                                        <a href="{% url 'product:update' pk=product.id %}"><button class="btn btn-primary btn-xs">{% trans "Update" %}</button></a>
+                                        <a href="{% url 'product:shop_stockin_detail' pk=product.id %}"><button class="btn btn-success btn-xs"> {% trans "Stock In" %}</button></a>
+                                        <a href="{% url 'product:shop_stockout_detail' pk=product.id %}"><button class="btn btn-danger btn-xs">{% trans "Stock Out" %}</button></a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+                                </tbody>
+                            </table>
+                            {% if paginator.page_range|length > 1 %}
+                            <div class="text-center col-lg-12">
+                                <ul class="pagination justify-content-center">
+                                    <li><a  style="background-color: #3070A8; color: white" class="page_previous" href="{% if page_obj.has_previous %}{% url 'product:list' %}?page={{ page_obj.previous_page_number }}{% else %}#{% endif %}" title="Previous"><<</a></li>
+                                    <li><a style="background-color: #3070A8; color: white" class="page_next" href="{% if page_obj.has_next %}{% url 'product:list' %}?page={{ page_obj.next_page_number }}{% else %}#{% endif %}" title="Next">>></a></li>
+                                </ul>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block script %}
+    {{ block.super }}
+<script>
+$(function () {
+    $('.search').on('click', function () {
+        var url = '{% url "product:shop_list" %}';
+        window.location.href  = url + '?' + 'product_name=' + $('.name_search').val() + '&product_category=' +  $('.category_search').val();
+    });
+})
+</script>
+{% endblock %}

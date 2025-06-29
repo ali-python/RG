@@ -1,5 +1,9 @@
 from django.contrib import admin
-from product.models import ProductCategory, Product, StockIn, StockOut, PurchasedItem
+from product.models import (
+    ProductCategory, Product, StockIn, StockOut, PurchasedItem, ProductTransfer, ShopProduct,
+    ShopStockIn,
+    ShopStockOut
+)
 
 
 class ProductCategoryAdmin(admin.ModelAdmin):
@@ -52,6 +56,41 @@ class PurchasedItemAdmin(admin.ModelAdmin):
     def invoice(obj):
         return str(obj.invoice.id).zfill(7)
 
+
+@admin.register(ProductTransfer)
+class ProductTransferAdmin(admin.ModelAdmin):
+    list_display = ('product', 'quantity_transferred', 'transfer_date')
+    list_filter = ('transfer_date',)
+    search_fields = ('product__name',)
+    date_hierarchy = 'transfer_date'
+
+
+@admin.register(ShopProduct)
+class ShopProductAdmin(admin.ModelAdmin):
+    list_display = ('original_product', 'unit')
+    search_fields = ('original_product', 'unit')
+
+
+@admin.register(ShopStockIn)
+class ShopStockInAdmin(admin.ModelAdmin):
+    list_display = (
+        'shop_product', 'stock_quantity', 'price_per_item', 'total_amount',
+        'buying_price_item', 'total_buying_amount', 'dated_order'
+    )
+    list_filter = ('dated_order',)
+    search_fields = ('shop_product__name',)
+    date_hierarchy = 'dated_order'
+
+
+@admin.register(ShopStockOut)
+class ShopStockOutAdmin(admin.ModelAdmin):
+    list_display = (
+        'product', 'invoice', 'stock_out_quantity', 'selling_price',
+        'buying_price', 'date'
+    )
+    list_filter = ('date',)
+    search_fields = ('product__name', 'invoice__invoice_number')
+    date_hierarchy = 'date'
 
 admin.site.register(ProductCategory, ProductCategoryAdmin)
 admin.site.register(Product, ProductAdmin)

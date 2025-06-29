@@ -1,0 +1,408 @@
+<!-- {% extends 'base.html' %}
+{% block sales %}active{% endblock %}
+{% block create_invoice %}active{% endblock %}
+{% load staticfiles %}
+{% block content %}
+    <style>
+        .item-row th {
+            background: #eee;
+        }
+
+        .delete-btn {
+            position: relative;
+        }
+
+        .delete {
+            display: block;
+            color: #000;
+            text-decoration: none;
+            position: absolute;
+            background: #EEEEEE;
+            font-weight: bold;
+            padding: 0px 3px;
+            border: 1px solid;
+            top: -6px;
+            left: -6px;
+            font-family: Verdana;
+            font-size: 12px;
+        }
+
+        table {
+          table-layout: fixed ;
+          width: 100% ;
+        }
+        td {
+          width: 25% ;
+        }
+
+    </style>
+    <div class="content-wrapper">
+        <section class="content-header">
+            <ol class="breadcrumb">
+                <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li class="active">Create Invoice</li>
+            </ol>
+        </section>
+        <br>
+        <section class="content">
+            <div class="row" style="font-size: large">
+                <div class="col-lg-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <h2 class="text-center">Create Invoice</h2>
+                        </div>
+                        <hr>
+                        <div class="box-body">
+                            <div class="row" style="font-size: large">
+                                <div class="col-xs-12 col-md-12">
+                                    <div class="row">
+                                        <div class="col-xs-6 col-md-6">
+                                            <div id="form-control  item-data-sc" class="table-responsive item-data-sc" style="height: 500px; overflow: auto; border: 1px solid #eee">
+                                                <table class="table table-bordered" id="purchaseTable">
+                                                    <thead>
+                                                    <tr class="item-row">
+                                                        <th>Item</th>
+                                                        <th>Stock</th>
+                                                        <th>Price</th>
+                                                        <th>Quantity</th>
+                                                        <th>Total</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <br>
+                                            <div class="col-xs-4">
+                                                <a id="addRow" href="javascript:;" title="Add Item" class="form-control btn btn-primary">Add Item</a> <span class="item-error" style="color: red; display: none">please add Item</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-6 col-md-6">
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-xs-6 col-md-6">
+                                                        <strong>Billed To:</strong> <span>{{today_date|date:'d-m-y'}}</span>
+                                                    </div>
+                                                    <div class="col-xs-6 col-md-6">
+                                                        <select class="form-control payment_type" name="payment_type" id="payment_type">
+                                                            <option value="Cash">Cash</option>
+                                                            <option value="Installment">Installment</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="bank-wrapper" style="display: none">
+                                                        <div class="col-xs-6 col-md-6">
+                                                            <br>
+                                                            Select a Bank for Deposit Check:
+                                                        </div>
+                                                        <div class="col-xs-6 col-md-6">
+                                                            <br>
+                                                            <select class="form-control bank" name="bank" id="bank">
+                                                                {% for bank in banks %}
+                                                                    <option value="{{ bank.id }}">{{ bank.name|title }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="existing-customer">
+                                                <span class="customererror" style="color: red; display: none">Customer Doesn't exist please add Customer</span>
+                                                <input class="form-control customer" id="customer-id" placeholder="Customer" list="customer-list" >
+                                                <datalist id="customer-list">
+                                                    {% for customer in customers %}
+                                                        <option data-id="{{ customer.id }}" value="{{ customer.name }}"></option>
+                                                    {% endfor %}
+                                                </datalist><br>
+                                                <a class="new-customer" style="cursor: pointer;">New Customer</a><br>
+                                                <br>
+                                            </div>
+                                            <div id="new-customer-form" class="new-customer-form" style="display: none">
+                                                <span class="already-error" style="color: red; display: none">This Customer Already exist</span>
+                                                <input type="text" class="form-control customer_name" name="customer_name" placeholder="Customer Name"><br>
+                                                <input type="text" class="form-control customer_cnic" name="customer_cnic" placeholder="Customer CNIC"><br>
+                                                <input type="number" class="form-control customer_phone" name="customer_phone" placeholder="Customer Phone"><br>
+                                                <a class="added-customer" style="cursor: pointer;">Existing Customer</a><br><br>
+                                            </div>
+
+                                            <div class="table-responsive " style="border: 1px solid #eee">
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                    <tbody>
+                                                    <tr hidden>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td class="text-right"><strong>Sub Total</strong></td>
+                                                        <td><span id="subtotal">0.00</span></td>
+                                                    </tr>
+                                                    <tr hidden>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td class="text-right"><strong>Discount</strong></td>
+                                                        <td><input class="form-control" id="discount" value="0" type="text"></td>
+                                                    </tr>
+                                                    <tr hidden>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td class="text-right"><strong>Shipping</strong></td>
+                                                        <td><input class="form-control" id="shipping" value="0" type="text"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Total Qty: </strong><span id="totalQty" style="color: red; font-weight: bold">0</span></td>
+                                                        <td></td>
+                                                        <td class="text-right"><strong>Grand Total</strong></td>
+                                                        <td><span id="grandTotal" style="color:red">0</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="4" class="text-center"><h4><strong>Customer Ledger</strong></h4></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="text-right">Received Amount</td>
+                                                        <td><input class="form-control" id="paidAmount" value="0" type="text"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="text-right">Remaining Amount</td>
+                                                        <td><span id="remainingAmount">0</span></td>
+                                                    </tr>
+                                                     <tr>
+                                                        <td colspan="4" class="text-center"><h4><strong>Cash Calculator</strong></h4></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-right" colspan="3">Cash Payment</td>
+                                                        <td><input class="form-control" id="cash_payment" value="0" type="text"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-right" colspan="3">Returned Cash</td>
+                                                        <td><span id="returned_cash">0</span></td>
+                                                    </tr> 
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <br>
+                                            <div class="col-md-12">
+                                                <a id="create-invoice" href="javascript:;" title="Create Invoice" class="form-control btn btn-primary">Create Invoice</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}
+
+{% block script %}
+    {{ block.super }}
+
+    <script src="{% static 'dist/js/jquery.invoice.js' %}"></script>
+    <script>
+        jQuery(document).ready(function(){
+            jQuery().invoice({
+                addRow : "#addRow",
+                delete : ".delete",
+                parentClass : ".item-row",
+
+                price : ".price",
+                qty : ".qty",
+                total : ".total",
+                totalQty: "#totalQty",
+
+                subtotal : "#subtotal",
+                discount: "#discount",
+                shipping : "#shipping",
+                grandTotal : "#grandTotal",
+
+                remainingAmount: '#remainingAmount',
+                paidAmount: '#paidAmount',
+
+                cashPayment: '#cash_payment',
+                returnedCash: '#returned_cash'
+            });
+
+        });
+        $(function () {
+            $('body').on('focusout', '.invoice-item', function(){
+
+                var item_price = $(this).parent().parent().find("option[value='" + $(this).val() + "']").data('price');
+                $(this).parent().parent().parent().find('.price').val(item_price);
+
+                var stock = $(this).parent().parent().find("option[value='" + $(this).val() + "']").data('stock')
+                $(this).parent().parent().parent().find('.stock').html(stock);
+            });
+            $('body').on('click', '#create-invoice', function () {
+
+                if ($('#item-name').hasClass('item-name') == false ) {
+                    $('.item-error').show();
+                    return;
+                }
+                var error = false;
+                if ($('.customer').is(":visible") == true)
+                {
+                    // if ($('.customer').val() =="")
+                    // {
+                    //     $('.customer').css('border-color', 'red');
+                    //     error = true;
+                    // } else {
+                    //     $('.customer').css('border', 'none');
+                    // }
+                    var existing_customers_id = [];
+                    {% for customer in customers %}
+                        existing_customers_id.push({{ customer.id }});
+                    {% endfor %}
+
+                    var cus_val = $('.customer').val();
+                    var cus_id = $('#customer-list [value="' + cus_val + '"]').data('id');
+                    // if(jQuery.inArray( cus_id, existing_customers_id ) == -1) {
+                    //     $('.customer-error').show();
+                    //     $('.customer').css('border-color', 'red');
+                    //     return;
+                    // } else {
+                    //     $('.customer-error').hide();
+                    // }
+                }
+                if ($('.customer_name').is(":visible") == true) {
+                    if ($('.customer_name').val() == "") {
+                        $('.customer_name').css('border-color', 'red');
+                        error = true;
+                    }
+                    else {
+                        $('.customer_name').css('border', 'none');
+                    }
+                    if ($('.customer_cnic').val() == "") {
+                        $('.customer_cnic').css('border-color', 'red');
+                        error = true;
+                    }
+                    else {
+                        $('.customer_cnic').css('border', 'none');
+                    }
+                    if ($('.customer_phone').val() == "") {
+                        $('.customer_phone').css('border-color', 'red');
+                    }
+                    else {
+                        $('.customer_phone').css('border', 'none');
+                    }
+                    {% for customer in customers %}
+                        if ($('.customer_name').val() == '{{ customer.name }}' && $('.customer_cnic').val()== '{{ customer.cnic }}') {
+                            $('.already-error').show();
+                            return;
+                        }
+                    {% endfor %}
+                }
+                if       ($('.invoice-item').val() == ""){
+                    $(".item-error").show();
+                    error=true;
+                    $('.invoice-item').css('border-color', 'red');
+                }
+                else {
+                    $('.invoice-item').css('border' ,'none');
+
+                }
+                if ($('.price').val()=="") {
+
+                    $('.item-error').show();
+                    $('.price').css('border-color', 'red');
+                    error=true;
+                }
+                else {
+                    $('.item-error').hide();
+                    $('.price').css('border', 'none');
+                }
+                if (error == true){
+                    return;
+                }
+                var customer_name = $('.customer_name').val();
+                var customer_phone = $('.customer_phone').val();
+                var customer_cnic = $('.customer_cnic').val();
+                var payment_type = $('.payment_type').val();
+                var bank = $('.bank').val();
+                var items = [];
+                var total_quantity = 0;
+                for (var i=1; i<$('.item-row').length; i+=1) {
+                    var products = {};
+                    products['item_name'] = $('.item-row').eq(i).find('#invoice-item').val();
+
+                    var ll = $('.item-row').eq(i).find('#invoice-item').val();
+                    products['item_id'] = $('.item-row').eq(i).find('#all-items [value="' + ll + '"]').data('id');
+
+                    products['price'] = $('.item-row').eq(i).find('.price').val();
+                    products['qty'] = $('.item-row').eq(i).find('.qty').val();
+                    products['perdiscount'] = $('.item-row').eq(i).find('.perdiscount').val();
+                    products['total'] = $('.item-row').eq(i).find('.total').text();
+                    if ($('.item-row').eq(i).find('#invoice-item').val() != "") {
+                        items.push(products);
+                        total_quantity += Number(products['qty']);
+                    }
+                }
+                var sub_total = $('#subtotal').text();
+                var discount = $('#discount').val();
+                var shipping = $('#shipping').val();
+                var grand_total = $('#grandTotal').text();
+                var remaining_amount = $('#remainingAmount').text();
+                var paid_amount = $('#paidAmount').val();
+                var cash_payment = $('#cash_payment').val();
+                var returned_cash = $('#returned_cash').text();
+                var totalQty = total_quantity;
+
+                var customer_value = $('.customer').val();
+                var customer_id = $('#customer-list [value="' + customer_value + '"]').data('id');
+
+                $.post("{% url 'sales:generate_invoice_api' %}", {
+                        customer_id: customer_id,
+                        customer_name: customer_name,
+                        customer_phone: customer_phone,
+                        customer_cnic: customer_cnic,
+                        sub_total: sub_total,
+                        discount: discount,
+                        shipping: shipping,
+                        grand_total: grand_total,
+                        totalQty: totalQty,
+                        remaining_amount: remaining_amount,
+                        paid_amount: paid_amount,
+                        cash_payment: cash_payment,
+                        returned_cash: returned_cash,
+                        payment_type: payment_type,
+                        bank: bank,
+                        items: JSON.stringify(items)
+                    }, function (result, status) {
+                        {#window.location.href = '/sales/invoice/'+ result.invoice_id +/detail/;#}
+                        window.location.href = '/sales/invoices';
+                    }
+                ).fail(function (xhr, status, errors) {
+                    alert('Something is wrong! please check all fields and try again');
+
+                });
+                });
+
+                $('.new-customer').on('click', function () {
+                $('.existing-customer').hide();
+                $('.new-customer-form').show();
+                $('.customer').val('');
+                });
+
+                $('.added-customer').on('click', function () {
+                $('.existing-customer').show();
+                $('.new-customer-form').hide();
+                $('.customer_name').val('');
+                $('.customer_phone').val('');
+                });
+
+                $('.payment_type').on('change', function () {
+                if ($(this).val() == 'Cash') {
+                    $('.bank-wrapper').hide();
+                } else {
+                    $('.bank-wrapper').show();
+                }
+                });
+
+                });
+                $('.btn-primary').on('click', function () {
+                $('.item-error').hide();
+                });
+
+                </script>
+
+
+{% endblock %} -->

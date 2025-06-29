@@ -2,15 +2,17 @@
 {% block customer %}active{% endblock %}
 {% block customer_list %}active{% endblock %}
 {% block content %}
+{% load i18n %}
+
 {% load staticfiles %}
 <div class="content-wrapper">
     <section class="content-header">
-        <a href="{% url 'customer:ledger_debit' pk=customer.id %}"><button type="button" value="Create" class="btn btn-success">Add Ledger</button></a>
-        <a href="{% url 'customer:ledger_credit' pk=customer.id %}"><button type="button" value="Create" class="btn btn-danger">Pay Ledger</button></a>
+        <a href="{% url 'customer:ledger_debit' pk=customer.id %}"><button type="button" value="Create" class="btn btn-success">{% trans "Add Ledger" %}</button></a>
+        <a href="{% url 'customer:ledger_credit' pk=customer.id %}"><button type="button" value="Create" class="btn btn-danger">{% trans "Pay Ledger" %}</button></a>
         <ol class="breadcrumb">
-            <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="{% url 'customer:list' %}"> Customer List</a></li>
-            <li class="active">Ledger</li>
+            <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> {% trans "Home" %}</a></li>
+            <li><a href="{% url 'customer:list' %}"> {% trans "Customer List" %}</a></li>
+            <li class="active">{% trans "Ledger" %}</li>
         </ol>
     </section>
     <section class="content">
@@ -18,7 +20,7 @@
             <div class="col-md-12">
                 <div class="box">
                     <div class="box-header">
-                        <h3 class="text-center"><b>{{ customer.name|title }} |</b> <small><b>Ledger Statement</b></small></h3>
+                        <h3 class="text-center"><b>{{ customer.name|title }} |</b> <small><b>{% trans "Ledger Statement" %}</b></small></h3>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
@@ -26,7 +28,7 @@
                                 <input type="date" class="form-control date_search" placeholder="Search by Date ..." >
                             </div>
                             <div class="col-md-2 pull-right">
-                                <button class="form-control btn btn-primary search">Search</button>
+                                <button class="form-control btn btn-primary search">{% trans "Search" %}</button>
                             </div>
                         <br><br>
                         <hr>
@@ -37,10 +39,10 @@
                             <table class="table align-items-center table-striped table-bordered table-hover">
                                 <thead class="thead-dark">
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Detail</th>
-                                    <th><small>Debit/Ledger Amount</small></th>
-                                    <th><small>Credit/Payment Amount</small></th>
+                                    <th>{% trans "Date" %}</th>
+                                    <th>{% trans "Detail" %}</th>
+                                    <th><small>{% trans "Debit/Ledger Amount" %}</small></th>
+                                    <th><small>{% trans "Credit/Payment Amount" %}</small></th>
                                 </tr>
                                 </thead>
                                 <tbody>

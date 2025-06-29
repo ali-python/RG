@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="content-wrapper">
+    <section class="content-header">
+        <h3>Invoice Scan & Status</h3>
+        <p>Store Scanned: <b id="store-count">{{ store_scanned_count }}</b> |
+           Shop Scanned: <b id="shop-count">{{ shop_scanned_count }}</b></p>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="col-md-6">
+                <input type="text" id="barcode-input" class="form-control" placeholder="Scan barcode..." autofocus>
+            </div>
+        </div>
+        <br>
+
+        <div id="billchecker-table">
+            {% include 'sales/bill_checker_table.html' %}
+        </div>
+    </section>
+</div>
+
+</table>
+
+{% endblock %}
+
+{% block script %}
+<script>
+document.getElementById('barcode-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        const barcode = this.value.trim();
+        if (!barcode) return;
+
+        fetch("{% url 'sales:scan_barcode' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+            body: JSON.stringify({ barcode: barcode })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                loadTable();
+            } else {
+                alert(data.message);
+            }
+        });
+
+        this.value = '';
+    }
+});
+
+function loadTable() {
+    fetch("{% url 'sales:billchecker_table_data' %}")
+    .then(res => res.text())
+    .then(html => {
+        document.getElementById('billchecker-table').innerHTML = html;
+        updateCount();
+    });
+}
+
+function updateCount() {
+    fetch(window.location.href)
+    .then(res => res.text())
+    .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        document.getElementById('store-count').textContent = doc.getElementById('store-count').textContent;
+        document.getElementById('shop-count').textContent = doc.getElementById('shop-count').textContent;
+    });
+}
+</script>
+{% endblock %}

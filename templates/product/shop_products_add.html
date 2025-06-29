@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block shop_product %}active{% endblock %}
+{% block shop_add_product %}active{% endblock %}
+{% load i18n %}
+
+{% load static %}
+{% block content %}
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <ol class="breadcrumb">
+            <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> {% trans "Home" %}</a></li>
+        </ol>
+    </section>
+    <br>
+    <section class="content">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="box">
+                    <div class="box-header">
+                        <h4 class="text-center"><b>{% trans "Add Shop Product & StockIn" %}</b></h4>
+                    </div>
+                    <div class="box-body">
+                        <form action="{% url 'product:add_shop_product' %}" method="post" autocomplete="off">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="product">{% trans "Select Product" %} <span style="color:red">*</span></label>
+                                <select class="form-control" name="product" required>
+                                    {% for product in products %}
+                                        <option value="{{ product.id }}">{{ product.name|title }} | {{product.category.category|title}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="unit">{% trans "Unit (e.g. kg, litre)" %}</label>
+                                <input type="text" name="unit" class="form-control" placeholder="{% trans "Unit (e.g. kg, litre)" %}">
+                            </div>
+                            <hr>
+                            <h5><b>{% trans "Stock In Details" %}</b></h5>
+                            <div class="form-group">
+                                <label for="stock_quantity">{% trans "Stock Quantity" %} <span style="color:red">*</span></label>
+                                <input type="text" name="stock_quantity" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="price_per_item">{% trans "Price Per Item" %}</label>
+                                <input type="number" step="0.01" name="price_per_item" class="form-control">
+                            </div>
+                            <!-- <div class="form-group">
+                                <label for="selling_percent">Selling Percent</label>
+                                <input type="number" step="0.01" name="selling_percent" class="form-control">
+                            </div> -->
+                            <div class="form-group">
+                                <label for="buying_price_item">{% trans "Buying Price Per Item" %}</label>
+                                <input type="number" step="0.01" name="buying_price_item" class="form-control">
+                            </div>
+                            <!-- <div class="form-group">
+                                <label for="buying_percent">Buying Percent</label>
+                                <input type="number" step="0.01" name="buying_percent" class="form-control">
+                            </div> -->
+                            <div class="form-group">
+                                <label for="dated_order">{% trans "Date" %}</label>
+                                <input type="date" name="dated_order" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary btn-block">{% trans "Save" %}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block shop_product %}active{% endblock %}
+{% block shop_add_product_list %}active{% endblock %}
+{% block content %}
+{% load i18n %}
+
+{% load staticfiles %}
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <!-- <a class="col-md-2 pull-left" href="{%url 'product:stock_out' pk=product.id %}"><button type="button" id="add-stock" class="btn btn-primary btn-sm">Stock Out </button></a> -->
+        <ol class="breadcrumb">
+            <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i>  {% trans "Home" %}</a></li>
+            <li class="active">{% trans "Stock Out" %}</li>
+        </ol>
+    </section>
+    <br>
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h4 class="text-center"><b>{{ product|title }} |</b> <small><b>{{ product.category.category }}</b></small> {% trans "Stock Out" %}</h4>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-4 pull-left">
+                                <input type="date" class="form-control date_search" placeholder="Search by Date ..." >
+                            </div>
+                            <div class="col-md-2 pull-right">
+                                <button class="form-control btn btn-primary search">{% trans "Search" %}</button>
+                            </div>
+                            <br><br>
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-advance table-hover item-table table-bordered">
+                                <thead class="thead-dark">
+                                <tr>
+                                    <th class="text-center">{% trans "Product" %}</th>
+                                    <th class="text-center">{% trans "Stock Out Quantity" %}</th>
+                                    <th class="text-center">{% trans "Date" %}</th>
+                                </tr>
+                                </thead>
+                                <tbody class="product-table-body text-center">
+                                    {% for stock_out in object_list %}
+                                    <tr>
+                                        {% load humanize %}
+                                        <td>{{ stock_out.product }} </td>
+                                        <td>{{ stock_out.stock_out_quantity|floatformat:-2|intcomma}}</td>
+                                        <td>{{ stock_out.date }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% if paginator.page_range|length > 1 %}
+                            <div class="text-center col-lg-12">
+                                <ul class="pagination justify-content-center">
+                                    <li><a  style="background-color: #3070A8; color: white" class="page_previous" href="{% if page_obj.has_previous %}{% url 'product:stockout_detail' pk=product.id %}?page={{ page_obj.previous_page_number }}{% else %}#{% endif %}" title="Previous"><<</a></li>
+                                    <li><a style="background-color: #3070A8; color: white" class="page_next" href="{% if page_obj.has_next %}{% url 'product:stockout_detail' pk=product.id %}?page={{ page_obj.next_page_number }}{% else %}#{% endif %}" title="Next">>></a></li>
+                                </ul>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block script %}
+    {{ block.super }}
+<script>
+$(function () {
+    $('.search').on('click', function () {
+        var url = '{% url "product:shop_stockout_detail" pk=product.id %}';
+        window.location.href  = url + '?' + 'date=' + $('.date_search').val();
+    });
+})
+</script>
+{% endblock %}

@@ -2,13 +2,15 @@
 {% block customer %}active{% endblock %}
 {% block customer_list %}active{% endblock %}
 {% block content %}
+{% load i18n %}
+
 {% load staticfiles %}
 <div class="content-wrapper">
     <section class="content-header">
         <ol class="breadcrumb">
-            <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="{% url 'customer:ledger_list' pk=customer.id %}">Ledger List</a></li>
-            <li class="active">Credit/Payment</li>
+            <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> {% trans "Home" %}</a></li>
+            <li><a href="{% url 'customer:ledger_list' pk=customer.id %}">{% trans "Ledger List" %}</a></li>
+            <li class="active">{% trans "Credit/Payment" %}</li>
         </ol>
     </section>
     <br>
@@ -17,7 +19,7 @@
             <div class="col-md-6 pull-left">
                 <div class="box">
                     <div class="box-header">
-                        <h3 class="text-center"><b>{{ customer.name|title }} |</b> <small><b>Credit Amount</b></small></h3>
+                        <h3 class="text-center"><b>{{ customer.name|title }} |</b> <small><b>{% trans "Credit Amount" %}</b></small></h3>
                     </div>
                     <div class="box-body">
                         <form action="{% url 'customer:ledger_debit' pk=customer.id %}" method="post" autocomplete="off">
@@ -25,24 +27,24 @@
                             <input type="hidden" name="customer" value="{{ customer.id }}">
                             <div class="row">
                                 <div class="col-md-12 pull-left form-group">
-                                    <label class="form-control-label">Credit Amount <span style="color:red">*</span></label>
-                                    <input type="text" name="credit_amount" class="form-control form-control-alternative" placeholder="Credit Amount" required>
+                                    <label class="form-control-label">{% trans "Credit Amount" %} <span style="color:red">*</span></label>
+                                    <input type="text" name="credit_amount" class="form-control form-control-alternative" placeholder="{% trans "Credit Amount" %}" required>
                                 </div>
                                 <div class="col-md-12 pull-left form-group">
-                                    <label class="form-control-label">Date <span style="color:red">*</span></label>
+                                    <label class="form-control-label">{% trans "Date" %} <span style="color:red">*</span></label>
                                     <input type="date" name="date" class="form-control" required>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12 pull-left form-group">
-                                    <label class="form-control-label">Details <span style="color:red">*</span></label>
-                                    <textarea type="text" name="details" class="form-control form-control-alternative" placeholder="Details" required></textarea>
+                                    <label class="form-control-label">{% trans "Detail" %} <span style="color:red">*</span></label>
+                                    <textarea type="text" name="details" class="form-control form-control-alternative" placeholder="{% trans "Detail" %}" required></textarea>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4 pull-right form-group">
                                     <label class="form-control-label"></label>
-                                    <button type="submit" value="Create" class="btn btn-primary form-control">Save</button>
+                                    <button type="submit" value="Create" class="btn btn-primary form-control">{% trans "Save" %}</button>
                                 </div>
                             </div>
                         </form>

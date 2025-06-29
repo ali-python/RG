@@ -2,15 +2,17 @@
 {% block product %}active{% endblock %}
 {% block product_list %}active{% endblock %}
 {% block content %}
-{% load staticfiles %}
+{% load i18n %}
+
+{% load static %}
 
 <div class="content-wrapper">
     <section class="content-header">
-        <a class="col-md-2 pull-left" href="{%url 'product:add_stock' pk=product.id %}"><button type="button" class="btn btn-primary btn-sm">Add Stock In</button></a>
+                <a class="col-md-2 pull-left" href="{%url 'product:add_stock' pk=product.id %}"><button type="button" class="btn btn-primary btn-sm">{% trans "Add Stock In" %}</button></a>
         <ol class="breadcrumb">
-            <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="{% url 'product:list' %}">Product List</a></li>
-            <li class="active">Stock In</li>
+            
+            <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> {% trans "Home" %}</a></li>
+            <li class="active">{% trans "Stock In" %}</li>
         </ol>
     </section>
     <br>
@@ -19,7 +21,7 @@
             <div class="col-md-12">
                 <div class="box">
                     <div class="box-header">
-                        <h4 class="text-center"><b>{{ product|title }} |</b> <small><b>{{ product.category.category }}</b></small> Stock In</h4>
+                        <h4 class="text-center"><b>{{ product|title }} |</b> <small><b>{{ product.category.category }}</b></small> {% trans "Stock In" %}</h4>
                     </div>
                     <br>
                     <div class="row">
@@ -28,7 +30,7 @@
                                 <input type="date" class="form-control date_search" placeholder="Search by Date ..." >
                             </div>
                             <div class="col-md-2 pull-right">
-                                <button class="form-control btn btn-primary search">Search</button>
+                                <button class="form-control btn btn-primary search">{% trans "Search" %}</button>
                             </div>
                             <br><br>
                             <hr>
@@ -39,15 +41,15 @@
                             <table class="table table-striped table-advance table-hover item-table table-bordered">
                                 <thead class="thead-dark">
                                 <tr>
-                                    <th class="text-center">Product</th>
-                                    <th class="text-center"><small>Stock Quantity</small></th>
-                                    <th class="text-center"><small>Price Per Item</small></th>
-                                    <th class="text-center"><small>Selling %</small></th>
-                                    <th class="text-center"><small>Total Amount</small></th>
-                                    <th class="text-center"><small>Buying Price Item</small></th>
-                                    <th class="text-center"><small>Buying %</small></th>
-                                    <th class="text-center"><small>Total Buying Amount</small></th>
-                                    <th class="text-center"><small>Order Dated</small></th>
+                                    <th class="text-center">{% trans "Product" %}</th>
+                                    <th class="text-center"><small>{% trans "Stock Quantity" %}</small></th>
+                                    <th class="text-center"><small>{% trans "Price Per Item" %}</small></th>
+                                    <!-- <th class="text-center"><small>Selling %</small></th> -->
+                                    <th class="text-center"><small>{% trans "Total Amount" %}</small></th>
+                                    <th class="text-center"><small>{% trans "Buying Price Per Item" %}</small></th>
+                                    <!-- <th class="text-center"><small>Buying %</small></th> -->
+                                    <th class="text-center"><small>{% trans "Total Buying Amount" %}</small></th>
+                                    <th class="text-center"><small>{% trans "Date" %}</small></th>
                                 </tr>
                                 </thead>
                                 <tbody class="product-table-body text-center">
@@ -57,10 +59,10 @@
                                         <td>{{ stock_in.product }}</td>
                                         <td>{{ stock_in.stock_quantity|floatformat:-2|intcomma}}</td>
                                         <td>{{ stock_in.price_per_item|floatformat:-2|intcomma }}</td>
-                                        <td>{{ stock_in.selling_percent|floatformat:-2|intcomma }}</td>
+                                        <!-- <td>{{ stock_in.selling_percent|floatformat:-2|intcomma }}</td> -->
                                         <td>{{ stock_in.total_amount|floatformat:-2|intcomma }}</td>
                                         <td>{{ stock_in.buying_price_item|floatformat:-2|intcomma }}</td>
-                                        <td>{{ stock_in.buying_percent|floatformat:-2|intcomma }}</td>
+                                        <!-- <td>{{ stock_in.buying_percent|floatformat:-2|intcomma }}</td> -->
                                         <td>{{ stock_in.total_buying_amount|floatformat:-2|intcomma }}</td>
                                         <td>{{ stock_in.dated_order }}</td>
                                     </tr>

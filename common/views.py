@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.db.models import Sum
 from django.utils import timezone
-from sales.models import Invoice
+from sales.models import Invoice, ShopInvoice
 from calendar import monthrange
 from dateutil.relativedelta import relativedelta
 import datetime
@@ -189,3 +189,102 @@ class MonthlyReports(TemplateView):
             'results': data_result
         })
         return context
+
+from django.utils.translation import gettext as _
+
+def my_view(request):
+    context = {
+        'welcome_message': _("Welcome to our site"),
+    }
+    return render(request, 'my_template.html', context)
+
+
+
+class ShopMonthlyReports(TemplateView):
+    template_name = 'reports/shop_reports.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            return HttpResponseRedirect(reverse('common:login'))
+
+        return super(
+            ShopMonthlyReports, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ShopMonthlyReports, self).get_context_data(**kwargs)
+        data_result = []
+        for month in range(60):
+            data = {}
+            date_month = timezone.now() - relativedelta(months=month)
+            month_range = monthrange(
+                date_month.year, date_month.month
+            )
+            start_month = datetime.datetime(
+                date_month.year, date_month.month, 1)
+
+            end_month = datetime.datetime(
+                date_month.year, date_month.month, month_range[1]
+            )
+
+            invoice = ShopInvoice.objects.filter(
+                date__gt=start_month,
+                date__lt=end_month.replace(
+                    hour=23, minute=59, second=59))
+
+            if invoice.exists():
+                commission = invoice.aggregate(
+                    Sum('grand_total'))
+                grand_total = float(
+                    commission.get('grand_total__sum') or 0
+                )
+
+            else:
+                grand_total = 0
+
+            if invoice.exists():
+                cash_payment = invoice.aggregate(
+                    Sum('cash_payment'))
+                total_cash_payment = float(
+                    cash_payment.get(
+                        'cash_payment__sum') or 0
+                )
+            else:
+                total_cash_payment = 0
+
+            if invoice.exists():
+                quantity = invoice.aggregate(
+                    Sum('total_quantity'))
+                total_quantity = float(
+                    quantity.get(
+                        'total_quantity__sum') or 0
+                )
+            else:
+                total_quantity = 0
+
+            customer = Customer.objects.filter(
+                date__gt=start_month,
+                date__lt=end_month.replace(
+                    hour=23, minute=59, second=59))
+
+            if customer.exists():
+                total_customer = customer.count()
+
+            else:
+                total_customer = 0
+
+            data.update({
+               'grand_total': grand_total,
+               'total_cash_payment': total_cash_payment,
+               'total_quantity': total_quantity,
+               'total_customer': total_customer,
+               'date': start_month.strftime('%b-%y')
+            })
+            data_result.append(data)
+
+        context.update({
+            'results': data_result
+        })
+        return context
+
+
+

@@ -2,16 +2,16 @@
 {% block product %}active{% endblock %}
 {% block product_list %}active{% endblock %}
 {% block content %}
+{% load i18n %}
+
 {% load staticfiles %}
 
 <div class="content-wrapper">
     <section class="content-header">
 
         <ol class="breadcrumb">
-            <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="{% url 'product:list' %}">Product List</a></li>
-            <li><a href="{% url 'product:stockout_detail' pk=product.id %}">Stock Out List</a></li>
-            <li class="active">Add</li>
+            <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> {% trans "Home" %}</a></li>
+            <li><a href="{% url 'product:stockout_detail' pk=product.id %}">{% trans "Stock Out List" %}</a></li>
         </ol>
     </section>
     <br>
@@ -20,30 +20,30 @@
             <div class="col-md-6 pull-left">
                 <div class="box">
                     <div class="box-header">
-                        <h4 class="text-center"><b>Stock Out Item</b></h4>
+                        <h4 class="text-center"><b>{% trans "Stock Out Item" %}</b></h4>
                     </div>
                     <div class="box-body">
                         <form action="" method="post" autocomplete="off">
                             {% csrf_token %}
                             <div class="row">
                                 <div class="col-md-12 pull-left form-group">
-                                    <label class="form-control-label" >Name & Category<span style="color:red">*</span></label>
+                                    <label class="form-control-label" >{% trans "Name & Category" %}<span style="color:red">*</span></label>
                                     <input type="text"  class="form-control form-control-alternative" value="{{product.name|title}} | {{product.category.category}}" readonly >
                                     <input type="hidden" name="product" class="form-control form-control-alternative" value="{{product.id}}" >
                                 </div>
                                 <div class="col-md-12 pull-left form-group">
-                                    <label class="form-control-label">Stock Out Quantity <span style="color:red">*</span></label>
-                                    <input type="text" name="stock_out_quantity" class="form-control form-control-alternative" placeholder="Stock Out Quantity" required>
+                                    <label class="form-control-label">{% trans "Stock Out Quantity" %} <span style="color:red">*</span></label>
+                                    <input type="text" name="stock_out_quantity" class="form-control form-control-alternative" placeholder="{% trans "Stock Out Quantity" %}" required>
                                 </div>
                                 <div class="col-md-12 pull-left form-group">
-                                    <label class="form-control-label">Date <span style="color:red">*</span></label>
-                                    <input type="date" name="date" class="form-control form-control-alternative" placeholder="Date" onfocus="(this.type='date')" onblur="(this.type='text')" required>
+                                    <label class="form-control-label">{% trans "Date" %} <span style="color:red">*</span></label>
+                                    <input type="date" name="date" class="form-control form-control-alternative" placeholder="{% trans "Date" %}" onfocus="(this.type='date')" onblur="(this.type='text')" required>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-2 pull-right form-group">
                                     <label class="form-control-label"></label>
-                                    <button type="submit" value="Create" class="btn btn-primary form-control">Save</button>
+                                    <button type="submit" value="Create" class="btn btn-primary form-control">"{% trans "Save" %}</button>
                                 </div>
                             </div>
                         </form>

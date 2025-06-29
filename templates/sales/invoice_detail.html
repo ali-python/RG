@@ -1,162 +1,207 @@
 {% extends 'base.html' %}
 {% block sales %}active{% endblock %}
 {% block invoice_list %}active{% endblock %}
+{% load i18n %}
+
 {% load staticfiles %}
 {% block content %}
-    <div class="content-wrapper">
-        <section class="content-header">
-            <a href="{% url 'sales:invoice_create' %}"><button type="button" id="invoice" class="btn btn-primary"  id="load" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i>Processing">Create Invoice</button></a>
-            <button type="button" class="btn btn-primary print-invoice-btn" onclick="PrintInvoice('print-invoice')" >Print Invoice</button>
-            <ol class="breadcrumb">
-                <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> Home</a></li>
-                <li><a href="{% url 'sales:invoice_list' %}">Invoice List</a></li>
-                <li class="active">Invoice View</li>
-            </ol>
-        </section>
-        <section class="content">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="box">
-                        <div class="box-body">
-                            <div class="row print-invoice" id="print-invoice">
-                                <div class="col-lg-12 text-center">
-                                    <h1 ><strong>Abu Abeer al Gawabry Trading</strong></h1>
-                                    {% if COMPANY_SLOGAN %}<h4>({{ COMPANY_SLOGAN }})</h4>{% endif %}
-                                    <span>
-                                       <!--  <strong>Address: </strong>{{ FULL_ADDRESS }}</span> <br>
-                                    {% if LINE_CONTACT %}<small class="f-size"><strong>Phone No:</strong> {{ LINE_CONTACT }} </small>{% endif %}<small class="f-size"><strong>Mobile No: </strong> {{ PRIMARY_CONTACT }}{% if SECONDARY_CONTACT %}, {{ SECONDARY_CONTACT }}{% endif %}</small> -->
-                                    <hr>
-                                    <u><h2>Invoice</h2></u>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="content-panel" style="padding: 5px">
-                                        <div class="row">
-                                            <div class="col-lg-6">
-                                                {% if invoice.customer %}
-                                                    <div class="col-lg-12">
-                                                        <label><strong class="f-size">Customer Name:</strong></label> <span class="f-size">{{ invoice.customer.name|title }}</span>
-                                                    </div>
-                                                    <div class="col-lg-12">
-                                                        <label><strong class="f-size">Mobile No:</strong></label> <span class="f-size">{{ invoice.customer.mobile|title }}</span>
-                                                    </div>
-                                                    <div class="col-lg-12">
-                                                        <label><strong class="f-size">Customer CNIC:</strong></label> <span class="f-size">{{ invoice.customer.cnic|title }}</span>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-lg-6 text-right">
-                                                <div class="col-lg-12">
-                                                    <label><strong class="f-size">Billed Date:</strong></label><span class="f-size">{{ invoice.date|date:"d-m-y" }}</span>
-                                                </div>
-                                                <div class="col-lg-12">
-                                                    <label><strong class="f-size">Payment Type:</strong></label> <span class="f-size">{{ invoice.payment_type }}</span>
-                                                </div>
-                                                <div class="col-lg-12">
-                                                    <label><strong class="f-size">Receipt No:</strong></label> <span class="f-size">{{ invoice.id|stringformat:"07d"|title }}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <br>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered">
-                                                        <thead>
-                                                        <tr class="item-row">
-                                                            <th >Item</th>
-                                                            <th >Quantity</th>
-                                                            <th >Total</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        {% for item in  invoice.invoice_purchased.all %}
-                                                            <tr id="hiderow">
-                                                                <td >
-                                                                    {{ item.item.name|title}} {{ item.item.category }}
-                                                                </td>
-                                                                <td >
-                                                                    {{ item.quantity|floatformat:-2}}
-                                                                </td>
-                                                                <td >
-                                                                    {{ item.purchase_amount|floatformat:-2 }}
-                                                                </td>
-                                                            </tr>
-                                                        {% endfor %}
-                                                        <tr><td colspan="4" style="color:white"></td></tr>
-                                                        <tr>
-                                                            <td><strong >Total Quantity: </strong><span id="totalQty" style="color: red; font-weight: bold;">{{ invoice.total_quantity }} </span> </td>
-                                                            <td class="text-right" ><strong >Grand Total</strong></td>
-                                                            <td><span id="grandTotal" style="color: red;">{{ invoice.grand_total|floatformat:-2 }}</span></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td></td>
-                                                            <td class="text-right"><strong >Cash Payment</strong></td>
-                                                            <td><span id="cash_payment" >{{ invoice.cash_payment|floatformat:-2 }}</span></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td></td>
-                                                            <td class="text-right"><strong >Returned Cash</strong></td>
-                                                            <td><span id="returned_cash"  >{{invoice.returned_payment|floatformat:-2 }}</span></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td></td>
-                                                            <td class="text-right"><strong >Received Amount</strong></td>
-                                                            <td><span id="receivedAmount" >{{ invoice.paid_amount|floatformat:-2 }}</span></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td></td>
-                                                            <td class="text-right" ><strong >Remaining Payment</strong></td>
-                                                            <td><span id="remainingAmount">{{ invoice.remaining_payment|floatformat:-2 }}</span></td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-xs-12 col-md-12" style="text-align: center;">
-                                                <strong style="font-size:12px;color:#000">Thank You</strong>
-                                            </div>
-                                            <div class="col-xs-12 col-md-12" style="text-align: center;">
-                                                <strong class="f-size">
-                                                    Abu Abeer al Gawabry Trading</strong>
-                                            </div>
-                                           
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
+<style media="print">
+    @page {
+        size: 80mm auto;
+        margin: 0;
+    }
+
+    body {
+        width: 80mm !important;
+        margin: 0 !important;
+        padding: 5mm !important;
+        font-family: 'Courier New', monospace;
+        font-size: 11px;
+        line-height: 1.2;
+        color: #000;
+    }
+
+    .no-print, .print-invoice-btn, .breadcrumb,
+    .box-header, .box-footer, .content-wrapper {
+        display: none !important;
+    }
+
+    .print-invoice {
+        width: 100%;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 5px;
+    }
+
+    th, td {
+        padding: 2px 0;
+        text-align: left;
+    }
+
+    hr {
+        border: none;
+        border-top: 1px dashed #000;
+        margin: 5px 0;
+    }
+
+    .thermal-header {
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 5px;
+    }
+
+    .thermal-cut {
+        height: 10px;
+        margin-top: 10px;
+        border-top: 1px dashed #000;
+        page-break-after: always;
+    }
+</style>
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <a href="{% url 'sales:invoice_create' %}">
+            <button type="button" id="invoice" class="btn btn-primary">{% trans "Create Invoice" %}</button>
+        </a>
+
+        <button type="button" class="btn btn-primary print-invoice-btn" onclick="printThermalInvoice()">
+            {% trans "Print Invoice" %}
+        </button>
+
+        <ol class="breadcrumb">
+            <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> {% trans "Home" %}</a></li>
+            <li><a href="{% url 'sales:invoice_list' %}">{% trans "Invoice List" %}</a></li>
+        </ol>
+    </section>
+
+    <section class="content">
+        <div class="box">
+            <div class="box-body">
+                <div id="print-invoice" class="print-invoice">
+                    <div class="thermal-header">
+                        <h3>{% trans "Reydi Gull Traders" %}</h3>
+                        <p><strong>{% trans "INVOICE" %}</strong></p>
                     </div>
+
+                    {% if invoice.customer %}
+                        <p><strong>{% trans "Customer" %}:</strong> {{ invoice.customer.name|upper }}</p>
+                        <p><strong>{% trans "Mobile" %}:</strong> {{ invoice.customer.mobile }}</p>
+                        <p><strong>{% trans "CNIC" %}:</strong> {{ invoice.customer.cnic }}</p>
+                    {% endif %}
+
+                    <p><strong>{% trans "Date" %}:</strong> {{ invoice.date|date:"d-m-Y" }}</p>
+                    <p><strong>{% trans "Payment" %}:</strong> {{ invoice.payment_type|upper }}</p>
+                    <p><strong>{% trans "Receipt" %} #:</strong> {{ invoice.id|stringformat:"07d" }}</p>
+
+                    <hr>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 50%;">{% trans "Item" %}</th>
+                                <th style="width: 15%;">{% trans "Qty" %}</th>
+                                <th style="width: 35%;">{% trans "Total" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in invoice.invoice_purchased.all %}
+                                <tr>
+                                    <td>{{ item.item.name|upper }} {{ item.item.category|upper }}</td>
+                                    <td>{{ item.quantity|floatformat:-2 }}</td>
+                                    <td>{{ item.purchase_amount|floatformat:-2 }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <hr>
+
+                    <table>
+                        <tr>
+                            <td><strong>{% trans "Total Qty" %}:</strong></td>
+                            <td>{{ invoice.total_quantity }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>{% trans "Grand Total" %}:</strong></td>
+                            <td>{{ invoice.grand_total|floatformat:-2 }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>{% trans "Cash Payment" %}:</strong></td>
+                            <td>{{ invoice.cash_payment|floatformat:-2 }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>{% trans "Received Amount" %}:</strong></td>
+                            <td>{{ invoice.paid_amount|floatformat:-2 }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>{% trans "Remaining Amount" %}:</strong></td>
+                            <td>{{ invoice.remaining_payment|floatformat:-2 }}</td>
+                        </tr>
+                    </table>
+
+                    {% if invoice.barcode_image %}
+                        <div class="text-center" style="margin-top: 8px;">
+                            <img src="{{ invoice.barcode_image.url }}" alt="Invoice Barcode" width="180" height="50">
+                        </div>
+                    {% endif %}
+
+                    <div class="text-center" style="margin-top: 8px;">
+                        <span><b>User:</b> {{request.user.username|title}}</span>
+                        <p><strong>{% trans "THANK YOU FOR YOUR BUSINESS!" %}</strong></p>
+                    </div>
+
+                    <div class="thermal-cut"></div>
                 </div>
             </div>
-        </section>
-    </div>
-    <script>
-        function PrintInvoice(divName){
-             var printContents = document.getElementById(divName).innerHTML;
-             var originalContents = document.body.innerHTML;
-             document.body.innerHTML = printContents;
-             $('table').removeClass('table-bordered');
-             $('tr').css('border', '1px solid #000');
-             $('td').css('border', '1px solid #000');
-             $('th').css('border', '1px solid #000');
-             $('th').css('font-size', '8px');
-             $('tr').css('font-size', '8px');
-             $('td').css('font-size', '8px');
-             $('.f-size').css('font-size', '8px');
-             window.print();
-             document.body.innerHTML = originalContents;
-        }
-    </script>
-<script>
+        </div>
+    </section>
+</div>
 
-$('#invoice').on('click', function() {
-    var $this = $(this);
-  $this.button('loading');
-    setTimeout(function() {
-       $this.button('reset');
-   }, 5000);
+<script>
+function printThermalInvoice() {
+    const content = document.getElementById('print-invoice').innerHTML;
+    const printWindow = window.open('', '', 'width=400,height=600');
+
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Invoice #{{ invoice.id }}</title>
+            <style>
+                @page { size: 80mm auto; margin: 0; }
+                body {
+                    width: 80mm !important;
+                    margin: 0;
+                    padding: 5mm;
+                    font-family: 'Courier New', monospace;
+                    font-size: 11px;
+                    line-height: 1.2;
+                }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { padding: 2px 0; }
+                .thermal-cut { height: 10px; page-break-after: always; border-top: 1px dashed #000; }
+            </style>
+        </head>
+        <body onload="window.print(); setTimeout(() => window.close(), 300);">
+            ${content}
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+}
+
+document.getElementById('invoice').addEventListener('click', function () {
+    const btn = this;
+    btn.innerHTML = '<i class="fa fa-circle-o-notch fa-spin"></i> Processing';
+    setTimeout(() => { btn.innerHTML = 'Create Invoice'; }, 5000);
 });
 </script>
 

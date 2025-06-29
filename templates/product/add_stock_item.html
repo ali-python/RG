@@ -2,15 +2,16 @@
 {% block product %}active{% endblock %}
 {% block product_list %}active{% endblock %}
 {% block content %}
-{% load staticfiles %}
+{% load i18n %}
+
+{% load static %}
 
 <div class="content-wrapper">
     <section class="content-header">
         <ol class="breadcrumb">
-            <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="{% url 'product:list' %}">Product List</a></li>
-            <li><a href="{% url 'product:stockin_detail' pk=product.id %}">Stock In List</a></li>
-            <li class="active">Add</li>
+            <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> {% trans "Home" %}</a></li>
+            <li><a href="{% url 'product:list' %}">{% trans "Product List" %}</a></li>
+            <li><a href="{% url 'product:stockin_detail' pk=product.id %}">{% trans "Stock In List" %}</a></li>
         </ol>
     </section>
     <br>
@@ -19,7 +20,7 @@
             <div class="col-md-12">
                 <div class="box">
                     <div class="box-header">
-                        <h3 class="text-center"><b>Add Stock Item</b></h3>
+                        <h3 class="text-center"><b>{% trans "Add Stock Item" %}</b></h3>
                     </div>
                     <div class="box-body">
                         <form class="form-horizontal product_item_form" action="{% url 'product:add_stock' pk=product.id %}" method="post" autocomplete="off">
@@ -29,26 +30,26 @@
                             <input type="hidden" name="retail_price" value="0">
                             <div class="row">
                                 <div class="col-md-6 pull-left">
-                                    <label class="form-control-label" >Name & Category<span style="color:red">*</span></label>
+                                    <label class="form-control-label" >{% trans "Name & Category" %}<span style="color:red">*</span></label>
                                     <input type="text"  class="form-control form-control-alternative" value="{{product.name}} | {{product.category.category}}" readonly>
                                 </div>
                                 <div class="col-md-6 pull-right">
                                     <input type="hidden" name="product" class="form-control form-control-alternative" value="{{product.id}}" >
-                                    <label class="form-control-label">Stock Quantity<span style="color:red">*</span></label>
-                                    <input type="text"  class="form-control quantity"  name="stock_quantity" id="quantity"  placeholder="Stock Quantity" required>
+                                    <label class="form-control-label">{% trans "Stock Quantity" %}<span style="color:red">*</span></label>
+                                    <input type="text"  class="form-control quantity"  name="stock_quantity" id="quantity"  placeholder="{% trans "Stock Quantity" %}" required>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 pull-left">
-                                    <label class="form-control-label">Buying Price / Item<span style="color:red">*</span></label>
-                                    <input type="text"  class="form-control buying_price_item"  name="buying_price_item" id="buying_price_item" placeholder="Buying Price Per Item" required>
+                                    <label class="form-control-label">{% trans "Buying Price Per Item" %}<span style="color:red">*</span></label>
+                                    <input type="text"  class="form-control buying_price_item"  name="buying_price_item" id="buying_price_item" placeholder=" {% trans "Buying Price Per Item" %}" required>
                                 </div>
                                 <div class="col-md-6 pull-right">
-                                    <label class="form-control-label">Selling Price / Item<span style="color:red">*</span></label>
-                                    <input type="text"  class="form-control price_per_item"  name="price_per_item" id="price_per_item"  onkeyup="sum()" placeholder="Price Per Item" required>
+                                    <label class="form-control-label">{% trans "Selling Price Per Item" %}<span style="color:red">*</span></label>
+                                    <input type="text"  class="form-control price_per_item"  name="price_per_item" id="price_per_item"  onkeyup="sum()" placeholder=" {% trans "Selling Price Per Item" %}" required>
                                 </div>
                             </div>
-                            <div class="row">
+                            <!-- <div class="row">
                                 <div class="col-md-6 pull-left">
                                     <label class="form-control-label">Buying Percent<span style="color:red">*</span></label>
                                     <input type="text"  class="form-control buying_percent"  name="buying_percent" id="buying_percent" value="0" required>
@@ -57,26 +58,26 @@
                                     <label class="form-control-label">Selling Price / Item<span style="color:red">*</span></label>
                                     <input type="text"  class="form-control selling_percent"  name="selling_percent" id="selling_percent" value="0" required>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="row">
                                 <div class="col-md-6 pull-left">
-                                    <label><strong>Total Buying Amount</strong></label>
-                                    <input type="text"  class="form-control total_buying_amount"  name="total_buying_amount"  id="total_buying_amount" placeholder="Total Buying Amount" readonly>
+                                    <label><strong>{% trans "Total Buying Amount" %}</strong></label>
+                                    <input type="text"  class="form-control total_buying_amount"  name="total_buying_amount"  id="total_buying_amount" placeholder=" {% trans "Total Buying Amount" %}" readonly>
                                 </div>
                                 <div class="col-md-6 pull-right">
-                                    <label><strong>Total Selling Amount</strong></label>
-                                    <input type="text"  class="form-control total_amount"  name="total_amount"  id="total_amount" placeholder="Total Selling Amount" readonly>
+                                    <label><strong>{% trans "Total Selling Amount" %}</strong></label>
+                                    <input type="text"  class="form-control total_amount"  name="total_amount"  id="total_amount" placeholder=" {% trans "Total Selling Amount" %}" readonly>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 pull-left">
-                                    <label><strong>Date Stock In</strong></label>
-                                    <input type="text"  class="form-control dated_order"  name="dated_order"  onkeyup="checkDec(this);" placeholder="Date Stock In" onfocus="(this.type='date')" onblur="(this.type='text')"><br>
+                                    <label><strong>{% trans "Date Stock In" %}</strong></label>
+                                    <input type="text"  class="form-control dated_order"  name="dated_order"  onkeyup="checkDec(this);" placeholder=" {% trans "Date Stock In" %}" onfocus="(this.type='date')" onblur="(this.type='text')"><br>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-2 pull-left">
-                                    <button type="button"  class="btn btn-primary product-sub-btn" style="width: 100%">Save Stock</button>
+                                    <button type="button"  class="btn btn-primary product-sub-btn" style="width: 100%">{% trans "Save" %}</button>
                                 </div>
                             </div>
                         </form>

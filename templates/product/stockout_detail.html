@@ -2,15 +2,17 @@
 {% block product %}active{% endblock %}
 {% block product_list %}active{% endblock %}
 {% block content %}
+{% load i18n %}
+
 {% load staticfiles %}
 
 <div class="content-wrapper">
     <section class="content-header">
-        <a class="col-md-2 pull-left" href="{%url 'product:stock_out' pk=product.id %}"><button type="button" id="add-stock" class="btn btn-primary btn-sm">Stock Out </button></a>
+        <a class="col-md-2 pull-left" href="{%url 'product:stock_out' pk=product.id %}"><button type="button" id="add-stock" class="btn btn-primary btn-sm">{% trans "Stock Out" %} </button></a>
         <ol class="breadcrumb">
-            <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="{% url 'product:list' %}">Product List</a></li>
-            <li class="active">Stock Out</li>
+            <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> {% trans "Home" %}</a></li>
+            <li><a href="{% url 'product:list' %}">{% trans "Product List" }</a></li>
+            <li class="active">{% trans "Stock Out" %}</li>
         </ol>
     </section>
     <br>
@@ -19,7 +21,7 @@
             <div class="col-md-12">
                 <div class="box">
                     <div class="box-header">
-                        <h4 class="text-center"><b>{{ product|title }} |</b> <small><b>{{ product.category.category }}</b></small> Stock Out</h4>
+                        <h4 class="text-center"><b>{{ product|title }} |</b> <small><b>{{ product.category.category }}</b></small> {% trans "Stock Out" %}</h4>
                     </div>
                     <br>
                     <div class="row">
@@ -28,7 +30,7 @@
                                 <input type="date" class="form-control date_search" placeholder="Search by Date ..." >
                             </div>
                             <div class="col-md-2 pull-right">
-                                <button class="form-control btn btn-primary search">Search</button>
+                                <button class="form-control btn btn-primary search">{% trans "Search" %}</button>
                             </div>
                             <br><br>
                             <hr>
@@ -39,9 +41,9 @@
                             <table class="table table-striped table-advance table-hover item-table table-bordered">
                                 <thead class="thead-dark">
                                 <tr>
-                                    <th class="text-center">Product</th>
-                                    <th class="text-center">Stock Out Quantity</th>
-                                    <th class="text-center">Dated</th>
+                                    <th class="text-center">{% trans "Product" %}</th>
+                                    <th class="text-center">{% trans "Stock Out Quantity" %}</th>
+                                    <th class="text-center">{% trans "Date" %}</th>
                                 </tr>
                                 </thead>
                                 <tbody class="product-table-body text-center">

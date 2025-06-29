@@ -1,0 +1,29 @@
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Store Invoice</th>
+            <th>Shop Invoice</th>
+            <th>Store Scanned</th>
+            <th>Shop Scanned</th>
+            <th>Created At</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for bill in bill_checkers %}
+        <tr>
+            <td>{{ bill.store_invoice.barcode }}</td>
+            <td>{{ bill.shop_invoice.barcode }}</td>
+            {% if bill.store_invoice_check == True%}
+            <td style="color: green;"><b>Clear from Store</b></td>
+            {%else%}
+            <td style="color: red;"><b>Not Store Invoice</b> </td>
+            {% endif %}
+            {% if bill.shop_invoice_check  == True%}
+            <td style="color: green;"><b>Clear from Store</b></td>
+            {%else%}
+            <td style="color: red;"><b>Not Shops Invoice</b> </td>
+            {% endif %}
+            <td>{{ bill.created_at }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>

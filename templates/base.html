@@ -1,10 +1,11 @@
 {% load static %}
+{% load i18n %}
 {% load template_tags %}
-<html>
-<head>
+<html lang="{{ request.LANGUAGE_CODE }}">
+    <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Abu Abeer al Gawabry Trading </title>
+    <title>{% trans "Reydi Gull Traders" %}</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'bower_components/font-awesome/css/font-awesome.min.css' %}">
@@ -12,179 +13,277 @@
     <link rel="stylesheet" href="{% static 'bower_components/jvectormap/jquery-jvectormap.css' %}">
     <link rel="stylesheet" href="{% static 'dist/css/AdminLTE.min.css' %}">
     <link rel="stylesheet" href="{% static 'dist/css/skins/_all-skins.min.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+<style>
+    .navbar-custom-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        height: 70px; /* Adjust as needed */
+        padding: 0 20px;
+    }
+    .navbar-custom-header .title-container {
+        display: flex;
+        flex-direction: column;
+        color: white;
+    }
+    .navbar-custom-header .title-container h4 {
+        margin: 0;
+        line-height: 1.2;
+    }
+</style>
 
-    <!-- Google Font -->
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
+    
 <div class="wrapper">
-
     <header class="main-header">
-
-        <!-- Logo -->
         <a href="#" class="logo">
-            <!-- mini logo for sidebar mini 50x50 pixels -->
-            <span class="logo-mini"><b>Trading</b></span>
-            <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg"><b>AAAG Trading</b></span>
+            <span class="logo-mini"><b>{% trans "RG" %}</b></span>
+            <span class="logo-lg"><b>{% trans "RG Traders" %}</b></span>
         </a>
 
-        <!-- Header Navbar: style can be found in header.less -->
-        <nav class="navbar navbar-static-top">
-            <!-- Sidebar toggle button-->
-            <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
-                <span class="sr-only">Toggle navigation</span>
-            </a>
-            <div  class="header">
-                <span style="color:white;"><h4><b> Abu Abeer al Gawabry Trading</b></h4></span>
-            </div>
-            <!-- Navbar Right Menu -->
-            <div class="navbar-custom-menu">
-                <ul class="nav navbar-nav">
-                   <!--  <li class="dropdown notifications-menu">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            Notifications <i class="fa fa-bell-o"></i>
-                            <span class="label label-danger notification_count">10</span>
-                        </a>
-                        {% get_products as p_n %}
-                        <ul class="dropdown-menu">
-                            <li class="header">Lower Quantity Notifications</li>
+        <nav class="navbar navbar-static-top" style="background-color: #3c8dbc;">
+    <div class="navbar-custom-header">
+        <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button" style="color:white;">
+            <i class="fa fa-bars"></i>
+        </a>
 
-                            <li class="header">
-                                <table class="table table-bordered table-hover">
-                                    {% for p in p_n %}
-                                        {% if p.product_available_items <= p.notify_qty %}
-                                            <tr>
-                                                <th><strong>{{ p.name|title }}</strong></th>
-                                                <td style="color:red">{{ p.product_available_items|floatformat:-2 }}</td>
-                                            </tr>
-                                        {% endif %}
-                                    {% endfor %}
-                                </table>
-                            </li>
-                            <li class="footer"><a href="{% url 'product:list' %}">View all</a></li>
-                        </ul>
-                    </li> -->
-                </ul>
-            </div>
+        <div class="title-container">
+            <h4><b>{% trans "Reydi Gull Traders" %}</b></h4>
+            <h4><b>{% trans "User" %}: {{ request.user.username|title }}</b></h4>
+        </div>
 
-        </nav>
+        <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav" style="display: flex; align-items: center;">
+                <li class="dropdown notifications-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="color:white;">
+                        {% trans "Notifications" %} <i class="fa fa-bell-o"></i>
+                        <span class="label label-danger notification_count">10</span>
+                    </a>
+                    {% get_products as p_n %}
+                    <ul class="dropdown-menu">
+                        <li class="header">{% trans "Lower Quantity Notifications" %}</li>
+                        <li class="header">
+                            <table class="table table-bordered table-hover">
+                                {% for p in p_n %}
+                                    {% if p.product_available_items <= p.notify_qty %}
+                                        <tr>
+                                            <th><strong>{{ p.name|title }}</strong></th>
+                                            <td style="color:red">{{ p.product_available_items|floatformat:-2 }}</td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </table>
+                        </li>
+                        <li class="footer"><a href="{% url 'product:list' %}">{% trans "View all" %}</a></li>
+                    </ul>
+                </li>
+                
+                <li>
+                    <form action="{% url 'set_language' %}" method="post" class="language-form" style="padding-left: 10px;">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="{{ redirect_to|default:request.path }}">
+                        <select name="language" class="form-control" onchange="this.form.submit()">
+                            {% get_current_language as LANGUAGE_CODE %}
+                            {% get_available_languages as LANGUAGES %}
+                            {% for code, name in LANGUAGES %}
+                                <option value="{{ code }}" {% if code == LANGUAGE_CODE %}selected{% endif %}>
+                                    {{ name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
     </header>
-    <!-- Left side column. contains the logo and sidebar -->
+
     <aside class="main-sidebar">
-        <!-- sidebar: style can be found in sidebar.less -->
         <section class="sidebar">
-            <!-- search form -->
             <ul class="sidebar-menu" data-widget="tree">
-                <li class="header">Main Navigation</li>
+                <li class="header"><h4>Welcome</h4></li>
                 <li class="treeview {% block product %}{% endblock %}">
-                    <a href="#">
-                        <i class="fa fa-product-hunt"></i> <span>Product</span>
+                {% if request.user.is_authenticated and request.user.user_profile.user_type == "admin" or request.user.user_profile.user_type == "staff"  %}                    <a href="#">
+                        <i class="fa fa-product-hunt"></i> <span>{% trans "Store Product" %}</span>
                         <span class="pull-right-container">
                             <i class="fa fa-angle-left pull-right"></i>
                         </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li class="{% block add_category %}{% endblock %}"><a href="{% url 'product:add_category' %}"><i class="fa fa-circle-o"></i>Add Category</a></li>
-                        <li class="{% block add_product %}{% endblock %}"><a href="{% url 'product:add' %}"><i class="fa fa-circle-o"></i>Add Product</a></li>
-                        <li class="{% block product_list %}{% endblock %}"><a href="{% url 'product:list' %}"><i class="fa fa-circle-o"></i>List Products</a></li>
+                        <li class="{% block add_category %}{% endblock %}"><a href="{% url 'product:add_category' %}"><i class="fa fa-circle-o"></i>{% trans "Add Category" %}</a></li>
+                        <li class="{% block add_product %}{% endblock %}"><a href="{% url 'product:add' %}"><i class="fa fa-circle-o"></i>{% trans "Add Product" %}</a></li>
+                        <li class="{% block product_list %}{% endblock %}"><a href="{% url 'product:list' %}"><i class="fa fa-circle-o"></i>{% trans "List Products" %}</a></li>
                     </ul>
                 </li>
+                {% else %}
+                <span style=" color:aliceblue">Permission Denied</span>
+                {% endif %}
+                {% if request.user.is_authenticated and request.user.user_profile.user_type == "admin" or request.user.user_profile.user_type == "staff"  %}                    <a href="#">
+                <li class="treeview {% block shop_product %}{% endblock %}">
+                    <a href="#">
+                        <i class="fa fa-product-hunt"></i> <span>{% trans "Shop Product" %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="{% block shop_add_product %}{% endblock %}"><a href="{% url 'product:add_shop_product' %}"><i class="fa fa-circle-o"></i>{% trans "Add Shop Product / Stock In" %}</a></li>
+                        <li class="{% block shop_add_product_list %}{% endblock %}"><a href="{% url 'product:shop_list' %}"><i class="fa fa-circle-o"></i>{% trans "Shop Product List" %}</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <span style="color:aliceblue">Permission Denied</span>
+                {%endif%}
+                {% if request.user.is_authenticated and request.user.user_profile.user_type == "admin" or request.user.user_profile.user_type == "staff"  %}                    <a href="#">
                 <li class="treeview {% block customer %}{% endblock %}">
                     <a href="#">
-                        <i class="fa fa-user"></i> <span>Customers</span>
+                        <i class="fa fa-user"></i> <span>{% trans "Customers" %}</span>
                         <span class="pull-right-container">
                             <i class="fa fa-angle-left pull-right"></i>
                         </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li class="{% block customer_create %}{% endblock %}"><a href="{% url 'customer:add' %}"><i class="fa fa-circle-o"></i>Add Customer</a></li>
-                        <li class="{% block customer_list %}{% endblock %}"><a href="{% url 'customer:list' %}"><i class="fa fa-circle-o"></i>Customer List</a></li>
+                        <li class="{% block customer_create %}{% endblock %}"><a href="{% url 'customer:add' %}"><i class="fa fa-circle-o"></i>{% trans "Add Customer" %}</a></li>
+                        <li class="{% block customer_list %}{% endblock %}"><a href="{% url 'customer:list' %}"><i class="fa fa-circle-o"></i>{% trans "Customer List" %}</a></li>
                     </ul>
                 </li>
-                <li class="treeview {% block bank %}{% endblock %}">
+                {% else %}
+                <span style="color:aliceblue">Permision Denied</span>
+                {%endif%}
+                <!-- <li class="treeview {% block bank %}{% endblock %}">
                     <a href="#">
-                        <i class="fa fa-university"></i> <span>Banking System</span>
+                        <i class="fa fa-university"></i> <span>{% trans "Banking System" %}</span>
                         <span class="pull-right-container">
                             <i class="fa fa-angle-left pull-right"></i>
                         </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li class="{% block add_bank %}{% endblock %}"><a href="{% url 'bank:add' %}"><i class="fa fa-circle-o"></i>Add Bank</a></li>
-                        <li class="{% block bank_list %}{% endblock %}"><a href="{% url 'bank:list' %}"><i class="fa fa-circle-o"></i>Bank List</a></li>
+                        <li class="{% block add_bank %}{% endblock %}"><a href="{% url 'bank:add' %}"><i class="fa fa-circle-o"></i>{% trans "Add Bank" %}</a></li>
+                        <li class="{% block bank_list %}{% endblock %}"><a href="{% url 'bank:list' %}"><i class="fa fa-circle-o"></i>{% trans "Bank List" %}</a></li>
                     </ul>
-                </li>
-                <li class="header">Sales & Expenses</li>
+                </li> -->
+                <li class="header">{% trans "Sales & Expenses" %}</li>
                 <li class="treeview {% block expense %}{% endblock %}">
                     <a href="#">
-                        <i class="fa fa-money"></i> <span>Expense System</span>
+                        <i class="fa fa-money"></i> <span>{% trans "Expense System" %}</span>
                         <span class="pull-right-container">
                             <i class="fa fa-angle-left pull-right"></i>
                         </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li class="{% block add_expense %}{% endblock %}"><a href="{% url 'expense:add' %}"><i class="fa fa-circle-o"></i> <span>Add Expense</span></a></li>
-                        <li class="{% block expense_list %}{% endblock %}"><a href="{% url 'expense:list' %}"><i class="fa fa-circle-o"></i>Expense List</a></li>
+                        <li class="{% block add_expense %}{% endblock %}"><a href="{% url 'expense:add' %}"><i class="fa fa-circle-o"></i> <span>{% trans "Add Expense" %}</span></a></li>
+                        <li class="{% block expense_list %}{% endblock %}"><a href="{% url 'expense:list' %}"><i class="fa fa-circle-o"></i>{% trans "Expense List" %}</a></li>
                     </ul>
                 </li>
                 <li class="treeview {% block sales %}{% endblock %}">
                     <a href="#">
-                        <i class="fa fa-shopping-cart"></i> <span>Sales</span>
+                        <i class="fa fa-shopping-cart"></i> <span>{% trans "Store Sales" %}</span>
                         <span class="pull-right-container">
                             <i class="fa fa-angle-left pull-right"></i>
                         </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li class="{% block create_invoice %}{% endblock %}"><a href="{% url 'sales:invoice_create' %}"><i class="fa fa-circle-o"></i> <span>Create Invoice</span></a></li>
-                        <li class="{% block invoice_list %}{% endblock %}"><a href="{% url 'sales:invoice_list' %}"><i class="fa fa-circle-o"></i>Invoices List</a></li>
+                        <li class="{% block create_invoice %}{% endblock %}"><a href="{% url 'sales:invoice_create' %}"><i class="fa fa-circle-o"></i> <span>{% trans "Create Invoice" %}</span></a></li>
+                        <li class="{% block invoice_list %}{% endblock %}"><a href="{% url 'sales:invoice_list' %}"><i class="fa fa-circle-o"></i>{% trans "Invoices List" %}</a></li>
                     </ul>
                 </li>
-                <li class="header">Logs & Reports</li>
-                <li class="treeview {% block stock_logs %}{% endblock %}">
+                <li class="treeview {% block shop_sales %}{% endblock %}">
                     <a href="#">
-                        <i class="fa fa-history"></i> <span>Stock Logs</span>
+                        <i class="fa fa-shopping-cart"></i> <span>{% trans "Shop Sales" %}</span>
                         <span class="pull-right-container">
                             <i class="fa fa-angle-left pull-right"></i>
                         </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li class="{% block daily_stock_logs %}{% endblock %}"><a href="{% url 'common:daily_logs' %}"><i class="fa fa-circle-o"></i> <span>Daily Logs</span></a></li>
-                        <li class="{% block monthly_stock_logs %}{% endblock %}"><a href="{% url 'common:monthly_logs' %}"><i class="fa fa-circle-o"></i>Monthly Logs</a></li>
+                        <li class="{% block shop_create_invoice %}{% endblock %}"><a href="{% url 'sales:shop_invoice_create' %}"><i class="fa fa-circle-o"></i> <span>{% trans "Shop Create Invoice" %}</span></a></li>
+                        <li class="{% block shop_invoice_list %}{% endblock %}"><a href="{% url 'sales:shop_invoice_list' %}"><i class="fa fa-circle-o"></i>{% trans "Shop Invoices List" %}</a></li>
+                    </ul>
+                </li>
+                {% if request.user.is_authenticated and request.user.user_profile.user_type == "admin"%}
+                <li class="header">{% trans "Logs & Reports" %}</li>
+                <li class="treeview {% block stock_logs %}{% endblock %}">
+                    <a href="#">
+                        <i class="fa fa-history"></i> <span>{% trans "Stock Logs" %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="{% block daily_stock_logs %}{% endblock %}"><a href="{% url 'common:daily_logs' %}"><i class="fa fa-circle-o"></i> <span>{% trans "Daily Logs" %}</span></a></li>
+                        <li class="{% block monthly_stock_logs %}{% endblock %}"><a href="{% url 'common:monthly_logs' %}"><i class="fa fa-circle-o"></i>{% trans "Monthly Logs" %}</a></li>
                     </ul>
                 </li>
                 <li class="treeview {% block reports %}{% endblock %}">
                     <a href="#">
-                        <i class="fa fa-copy"></i> <span>Reports</span>
+                        <i class="fa fa-copy"></i> <span>{% trans "Reports" %}</span>
                         <span class="pull-right-container">
                             <i class="fa fa-angle-left pull-right"></i>
                         </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li class="{% block monthly_reports %}{% endblock %}"><a href="{% url 'common:reports' %}"><i class="fa fa-circle-o"></i> <span>Monthly Reports</span></a></li>
+                        <li class="{% block monthly_reports %}{% endblock %}"><a href="{% url 'common:reports' %}"><i class="fa fa-circle-o"></i> <span>{% trans "Monthly Reports" %}</span></a></li>
                     </ul>
                 </li>
-                <li class="header">User</li>
-                 <li>
-                    <a href="{% url 'common:logout' %}"><i class="fa fa-sign-out"></i> <span>Logout</span></a>
+                <li class="header">{% trans "Shop Logs & Reports" %}</li>
+                <li class="treeview {% block shop_stock_logs %}{% endblock %}">
+                    <a href="#">
+                        <i class="fa fa-history"></i> <span>{% trans "Shop Stock Logs" %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="{% block shop_daily_stock_logs %}{% endblock %}"><a href="{% url 'common:shop_daily_logs' %}"><i class="fa fa-circle-o"></i> <span>{% trans "Daily Logs" %}</span></a></li>
+                        <li class="{% block shop_monthly_stock_logs %}{% endblock %}"><a href="{% url 'common:shop_monthly_logs' %}"><i class="fa fa-circle-o"></i>{% trans "Monthly Logs" %}</a></li>
+                    </ul>
                 </li>
+                <li class="treeview {% block shop_reports %}{% endblock %}">
+                    <a href="#">
+                        <i class="fa fa-copy"></i> <span>{% trans "Shop Reports" %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="{% block shop_monthly_reports %}{% endblock %}"><a href="{% url 'common:shop_reports' %}"><i class="fa fa-circle-o"></i> <span>{% trans "Monthly Reports" %}</span></a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <span style="color:aliceblue">Permission Denied</span>
+                {% endif %}
+                <li class="treeview {% block bill_checker %}{% endblock %}">
+                    <a href="#">
+                        <i class="fa fa-copy"></i> <span>{% trans "Bill Checker" %}</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="{% block bill_checker_act %}{% endblock %}"><a href="{% url 'sales:billchecker_page' %}"><i class="fa fa-circle-o"></i> <span>{% trans "Bill Check" %}</span></a></li>
+                    </ul>
+                </li>
+                <li class="header">{% trans "User" %}</li>
                 <li>
-                    <a href="{% url 'admin:index' %}"><i class="fa fa-sign-in"></i> <span>Admin Pannel</span></a>
+                    <a href="{% url 'common:logout' %}"><i class="fa fa-sign-out"></i> <span>{% trans "Logout" %}</span></a>
                 </li>
+                <!-- <li>
+                    <a href="{% url 'admin:index' %}"><i class="fa fa-sign-in"></i> <span>{% trans "Admin Panel" %}</span></a>
+                </li> -->
             </ul>
         </section>
     </aside>
 
-    <!-- Content Wrapper. Contains page content -->
     {% block content %}{% endblock %}
-    <!-- /.content-wrapper -->
 
     <footer class="main-footer">
         <div class="pull-right hidden-xs">
-            <b>Version</b> 2.4.18
+            <b>{% trans "Version" %}</b> 2.4.18
         </div>
-        <strong>Copyright &copy; 2022 <a href="#">Abu Abeer al Gawabry Trading</a>.</strong> All rights
-        reserved.
+        <strong>{% trans "Copyright" %} &copy; 2022 <a href="#">{% trans "Reydi Gull Traders" %}</a>.</strong> {% trans "All rights reserved." %}
     </footer>
 </div>
 
@@ -212,7 +311,6 @@
 
         $('.notification_count').text(notification_count);
     </script>
-
 {% endblock %}
 </body>
 </html>

@@ -2,13 +2,15 @@
 {% block product %}active{% endblock %}
 {% block product_list %}active{% endblock %}
 {% block content %}
-{% load staticfiles %}
+{% load i18n %}
+
+{% load static %}
 
 <div class="content-wrapper">
     <section class="content-header">
         <ol class="breadcrumb">
-            <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li class="active">Product List</li>
+            <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> {% trans "Home" %}</a></li>
+            <li class="active">{% trans "Product List" %}</li>
         </ol>
     </section>
     <br>
@@ -17,7 +19,7 @@
             <div class="col-md-12 form-group">
                 <div class="box">
                     <div class="row">
-                        <h4 class="text-center"><b>Product List</b></h4>
+                        <h4 class="text-center"><b>{% trans "Product List" %}</b></h4>
                     </div>
                     <br>
                     <div class="row">
@@ -29,7 +31,7 @@
                                 <input type="text" class="form-control category_search" placeholder="Search by Category ...">
                             </div>
                             <div class="col-md-2 pull-right">
-                                <button class="form-control btn btn-primary search">Search</button>
+                                <button class="form-control btn btn-primary search">{% trans "Search" %}</button>
                             </div>
                             <br><br>
                             <hr>
@@ -40,29 +42,29 @@
                             <table class="table align-items-center table-striped table-bordered table-hover">
                                 <thead class="thead-dark">
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Category</th>
-                                    <th>Notify Quantity</th>
-                                    <th>Total Quantity</th>
-                                    <th>Available Item</th>
-                                    <th>Date</th>
-                                    <th class="text-center">Action</th>
+                                    <th>{% trans "Name" %}</th>
+                                    <th>{% trans "Category" %}</th>
+                                    <!-- <th>Notify Quantity</th> -->
+                                    <th>{% trans "Total Quantity" %}</th>
+                                    <th>{% trans "Available Item" %}</th>
+                                    <th>{% trans "Date" %}</th>
+                                    <th class="text-center">{% trans "Action" %}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {% for product in object_list %}
                                 <tr>
-                                    {% load humanize %}
+                                    <!-- {% load humanize %} -->
                                     <td>{{product.name|title}}</td>
                                     <td>{{product.category|title}}</td>
-                                    <td>{{product.notify_qty|floatformat:-2}}</td>
+                                    <!-- <td>{{product.notify_qty|floatformat:-2}}</td> -->
                                     <td>{{product.total_items|floatformat:-2}}</td>
                                     <td>{{product.product_available_items|floatformat:-2}}</td>
                                     <td>{{product.date}}</td>
                                     <td class="text-center">
-                                        <a href="{% url 'product:update' pk=product.id %}"><button class="btn btn-primary btn-xs">Update</button></a>
-                                        <a href="{% url 'product:stockin_detail' pk=product.id %}"><button class="btn btn-success btn-xs">Stock In</button></a>
-                                        <a href="{% url 'product:stockout_detail' pk=product.id %}"><button class="btn btn-danger btn-xs">Stock Out</button></a>
+                                        <a href="{% url 'product:update' pk=product.id %}"><button class="btn btn-primary btn-xs">{% trans "Update" %}</button></a>
+                                        <a href="{% url 'product:stockin_detail' pk=product.id %}"><button class="btn btn-success btn-xs">{% trans "Stock In" %}</button></a>
+                                        <a href="{% url 'product:stockout_detail' pk=product.id %}"><button class="btn btn-danger btn-xs">{% trans "Stock Out" %}</button></a>
                                     </td>
                                 </tr>
                                 {% endfor %}
