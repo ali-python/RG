@@ -6,7 +6,7 @@ from django.utils import timezone
 class Customer(models.Model):
     name = models.CharField(max_length=200)
     father_name = models.CharField(max_length=200, null=True, blank=True)
-    cnic = models.CharField(max_length=200)
+    cnic = models.CharField(max_length=200, null=True, blank=True)
     mobile = models.CharField(max_length=200, null=True, blank=True)
     alternate_mobile = models.CharField(max_length=200, null=True, blank=True)
     resident = models.CharField(max_length=200, null=True, blank=True)
@@ -16,6 +16,12 @@ class Customer(models.Model):
 
     def __str__(self):
         return self.name
+    
+    @classmethod
+    def total_debit_amount(cls):
+        total = CustomerLedger.objects.aggregate(total=Sum('debit_amount'))['total']
+        return total or 0
+
 
     def get_unpaid_amount(self):
         customer_ledgers = self.customer_ledger.all()
@@ -32,6 +38,13 @@ class Customer(models.Model):
 
         unpaid_amount = debit_amount - credit_amount
         return unpaid_amount
+
+    @classmethod
+    def total_unpaid_amount(cls):
+        total = 0
+        for customer in cls.objects.all():
+            total += customer.get_unpaid_amount()
+        return total
 
 
 class CustomerLedger(models.Model):

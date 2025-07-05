@@ -94,7 +94,7 @@
                     {% if invoice.customer %}
                         <p><strong>{% trans "Customer" %}:</strong> {{ invoice.customer.name|upper }}</p>
                         <p><strong>{% trans "Mobile" %}:</strong> {{ invoice.customer.mobile }}</p>
-                        <p><strong>{% trans "CNIC" %}:</strong> {{ invoice.customer.cnic }}</p>
+                        <!-- <p><strong>{% trans "CNIC" %}:</strong> {{ invoice.customer.cnic }}</p> -->
                     {% endif %}
 
                     <p><strong>{% trans "Date" %}:</strong> {{ invoice.date|date:"d-m-Y" }}</p>

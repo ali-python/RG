@@ -5,7 +5,7 @@
     <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{% trans "Reydi Gull Traders" %}</title>
+    <title>{% trans "Radi Gull Traders" %}</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'bower_components/font-awesome/css/font-awesome.min.css' %}">
@@ -51,13 +51,13 @@
         </a>
 
         <div class="title-container">
-            <h4><b>{% trans "Reydi Gull Traders" %}</b></h4>
+            <h4><b>{% trans "Radi Gull Traders" %}</b></h4>
             <h4><b>{% trans "User" %}: {{ request.user.username|title }}</b></h4>
         </div>
 
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav" style="display: flex; align-items: center;">
-                <li class="dropdown notifications-menu">
+                <!-- <li class="dropdown notifications-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="color:white;">
                         {% trans "Notifications" %} <i class="fa fa-bell-o"></i>
                         <span class="label label-danger notification_count">10</span>
@@ -79,7 +79,7 @@
                         </li>
                         <li class="footer"><a href="{% url 'product:list' %}">{% trans "View all" %}</a></li>
                     </ul>
-                </li>
+                </li> -->
                 
                 <li>
                     <form action="{% url 'set_language' %}" method="post" class="language-form" style="padding-left: 10px;">
@@ -283,7 +283,7 @@
         <div class="pull-right hidden-xs">
             <b>{% trans "Version" %}</b> 2.4.18
         </div>
-        <strong>{% trans "Copyright" %} &copy; 2022 <a href="#">{% trans "Reydi Gull Traders" %}</a>.</strong> {% trans "All rights reserved." %}
+        <strong>{% trans "Copyright" %} &copy; 2022 <a href="#">{% trans "Radi Gull Traders" %}</a>.</strong> {% trans "All rights reserved." %}
     </footer>
 </div>
 

@@ -32,21 +32,21 @@
                                 </div>
                                 <div class="col-md-4 form-group">
                                     <label class="form-control-label">{% trans "Father name" %} <span style="color:red">*</span></label>
-                                    <input type="text" name="father_name" class="form-control form-control-alternative" placeholder="father_name" value="{{ object.father_name }}" required>
+                                    <input type="text" name="father_name" class="form-control form-control-alternative" placeholder="father_name" value="{{ object.father_name }}" >
                                 </div>
                                 <div class="col-md-4 pull-right form-group">
                                     <label class="form-control-label">{% trans "CNIC" %} <span style="color:red">*</span></label>
-                                    <input type="text" name="cnic" class="form-control form-control-alternative" placeholder="CNIC" value="{{ object.cnic }}" required>
+                                    <input type="text" name="cnic" class="form-control form-control-alternative" placeholder="CNIC" value="{{ object.cnic }}">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4 pull-left form-group">
                                     <label class="form-control-label">{% trans "City" %} <span style="color:red">*</span></label>
-                                    <input type="text" name="city" class="form-control form-control-alternative" placeholder="City" value="{{ object.city }}" required>
+                                    <input type="text" name="city" class="form-control form-control-alternative" placeholder="City" value="{{ object.city }}" >
                                 </div>
                                 <div class="col-md-4 form-group">
                                     <label class="form-control-label">{% trans "Mobile" %} <span style="color:red">*</span></label>
-                                    <input type="text" name="mobile" class="form-control form-control-alternative" placeholder="Mobile" value="{{ object.mobile }}" required>
+                                    <input type="text" name="mobile" class="form-control form-control-alternative" placeholder="Mobile" value="{{ object.mobile }}" >
                                 </div>
                                 <div class="col-md-4 pull-right form-group">
                                     <label class="form-control-label">{% trans "Alternate Mobile" %} <span style="color:red">*</span></label>
@@ -54,11 +54,11 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6 pull-left form-group">
+                                <!-- <div class="col-md-6 pull-left form-group">
                                     <label class="form-control-label">{% trans "Resident" %} <span style="color:red">*</span></label>
-                                    <input type="text" name="resident" class="form-control form-control-alternative" placeholder="Resident" value="{{ object.resident }}" required>
-                                </div>
-                                <div class="col-md-6 pull-right form-group">
+                                    <input type="text" name="resident" class="form-control form-control-alternative" placeholder="Resident" value="{{ object.resident }}" >
+                                </div> -->
+                                <div class="col-md-6 pull-left form-group">
                                     <label class="form-control-label">{% trans "Complete Address" %} <span style="color:red">*</span></label>
                                     <input type="text" name="address" class="form-control form-control-alternative" placeholder="Complete Address" value="{{ object.address }}" required>
                                 </div>

@@ -55,6 +55,19 @@ class CustomerList(ListView):
             )
 
         return queryset.order_by('-id')
+    
+    def get_context_data(self, **kwargs):
+        context = super(CustomerList, self).get_context_data(**kwargs)
+        unpaid_total = Customer.total_unpaid_amount() 
+        print(unpaid_total)
+        print("_________________________")
+        context.update({
+            'unpaid_total': unpaid_total
+        })
+        return context
+
+
+
 
 
 class UpdateCustomer(UpdateView):

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from sales.models import Invoice, InvoiceInstallment, BillChecker
+from sales.models import Invoice, InvoiceInstallment, BillChecker, ShopInvoice
 
 
 class InvoiceAdmin(admin.ModelAdmin):
@@ -18,5 +18,7 @@ class InvoiceInstallmentAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Invoice, InvoiceAdmin)
+
+admin.site.register(ShopInvoice)
 admin.site.register(InvoiceInstallment, InvoiceInstallmentAdmin)
 admin.site.register(BillChecker)

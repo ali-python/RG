@@ -279,14 +279,18 @@ def add_shop_product_view(request):
     if request.method == 'POST':
         product_id = request.POST.get('product')
         unit = request.POST.get('unit')
-
+        bulk_quantity = Decimal(request.POST.get('bulk_quantity') or 0)
+        pack_weight = Decimal(request.POST.get('pack_weight') or 0)
+        number_of_parcel = Decimal(request.POST.get('number_of_parcel') or 0)
+        parcel_weight = Decimal(request.POST.get('parcel_weight') or 0)
         stock_quantity = Decimal(request.POST.get('stock_quantity') or 0)
         price_per_item = Decimal(request.POST.get('price_per_item') or 0)
         selling_percent = Decimal(request.POST.get('selling_percent') or 0)
         buying_price_item = Decimal(request.POST.get('buying_price_item') or 0)
         buying_percent = Decimal(request.POST.get('buying_percent') or 0)
         dated_order = request.POST.get('dated_order') or timezone.now().date()
-
+        print(number_of_parcel)
+        print("___________________________________")
         try:
             product = Product.objects.get(id=product_id)
         except Product.DoesNotExist:
@@ -301,14 +305,18 @@ def add_shop_product_view(request):
         if not created and unit:
             shop_product.unit = unit
             shop_product.save()
-
-        total_amount = price_per_item * stock_quantity
-        total_buying_amount = buying_price_item * stock_quantity
+        
+        total_amount = price_per_item * bulk_quantity
+        total_buying_amount = buying_price_item * bulk_quantity
 
         # Create ShopStockIn
         ShopStockIn.objects.create(
             shop_product=shop_product,
-            stock_quantity=stock_quantity,
+            bulk_quantity_quantity = stock_quantity,
+            parcel_weight = parcel_weight,
+            pack_weight = pack_weight,
+            number_of_parcel = number_of_parcel,
+            stock_quantity=bulk_quantity,
             price_per_item=price_per_item,
             total_amount=total_amount,
             selling_percent=selling_percent,
@@ -332,7 +340,7 @@ def add_shop_product_view(request):
             # Create StockOut
             StockOut.objects.create(
                 product=product,
-                stock_out_quantity=stock_quantity,
+                stock_out_quantity=bulk_quantity,
                 selling_price=price_per_item,
                 stock_out_store=True,
                 buying_price=buying_price_item,

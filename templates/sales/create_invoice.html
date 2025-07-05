@@ -141,10 +141,10 @@
                                                 <br>
                                             </div>
                                             <div id="new-customer-form" class="new-customer-form" style="display: none">
+                                                                                                <input type="hidden" class="form-control customer_cnic" name="customer_cnic" value="54400000000000000">
                                                 <span class="already-error" style="color: red; display: none">This Customer Already exist</span>
-                                                <input type="text" class="form-control customer_name" name="customer_name" placeholder="Customer Name"><br>
-                                                <input type="text" class="form-control customer_cnic" name="customer_cnic" placeholder="Customer CNIC"><br>
-                                                <input type="number" class="form-control customer_phone" name="customer_phone" placeholder="Customer Phone"><br>
+                                                <input type="text" class="form-control customer_name" name="customer_name" placeholder="{% trans "Name" %}"><br>
+                                                <input type="number" class="form-control customer_phone" name="customer_phone" placeholder="{% trans "Phone" %}"><br>
                                                 <a class="added-customer" style="cursor: pointer;">{% trans "Existing Customer" %}</a><br><br>
                                             </div>
 

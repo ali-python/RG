@@ -2,7 +2,6 @@
 {% block shop_product %}active{% endblock %}
 {% block shop_add_product %}active{% endblock %}
 {% load i18n %}
-
 {% load static %}
 {% block content %}
 
@@ -18,52 +17,84 @@
             <div class="col-md-8">
                 <div class="box">
                     <div class="box-header">
-                        <h4 class="text-center"><b>{% trans "Add Shop Product & StockIn" %}</b></h4>
+                        <h4 class="text-center"><b>{% trans "Add Shop Product & Auto Package StockIn" %}</b></h4>
                     </div>
                     <div class="box-body">
                         <form action="{% url 'product:add_shop_product' %}" method="post" autocomplete="off">
                             {% csrf_token %}
+
                             <div class="form-group">
-                                <label for="product">{% trans "Select Product" %} <span style="color:red">*</span></label>
+                                <label>{% trans "Select Product" %} <span style="color:red">*</span></label>
                                 <select class="form-control" name="product" required>
                                     {% for product in products %}
-                                        <option value="{{ product.id }}">{{ product.name|title }} | {{product.category.category|title}}</option>
+                                        <option value="{{ product.id }}">{{ product.name|title }} | {{ product.category.category|title }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
+
                             <div class="form-group">
-                                <label for="unit">{% trans "Unit (e.g. kg, litre)" %}</label>
-                                <input type="text" name="unit" class="form-control" placeholder="{% trans "Unit (e.g. kg, litre)" %}">
+                                <label>{% trans "Select Unit" %} <span style="color:red">*</span></label>
+                                <select class="form-control" name="unit" required>
+                                    <option value="kg">Kilogram (kg)</option>
+                                    <option value="g">Gram (g)</option>
+                                    <option value="litre">Litre</option>
+                                    <option value="ml">Millilitre (ml)</option>
+                                    <option value="piece">Piece</option>
+                                    <option value="pack">Pack</option>
+                                </select>
                             </div>
+
                             <hr>
-                            <h5><b>{% trans "Stock In Details" %}</b></h5>
+                            <h5><b>{% trans "Packaging / Conversion Details" %}</b></h5>
+
                             <div class="form-group">
-                                <label for="stock_quantity">{% trans "Stock Quantity" %} <span style="color:red">*</span></label>
-                                <input type="text" name="stock_quantity" class="form-control" required>
+                                <label for="bulk_quantity">{% trans "Total Bulk Quantity (number of parcels)" %} *</label>
+                                <input type="number" name="bulk_quantity" id="bulk_quantity" class="form-control" step="1" min="1">
                             </div>
+
                             <div class="form-group">
-                                <label for="price_per_item">{% trans "Price Per Item" %}</label>
-                                <input type="number" step="0.01" name="price_per_item" class="form-control">
+                                <label for="parcel_weight">{% trans "Bulk Parcel Weight (e.g., 50 kg per parcel)" %} *</label>
+                                <input type="number" name="parcel_weight" id="parcel_weight" class="form-control" step="0.01" min="0.01" >
                             </div>
-                            <!-- <div class="form-group">
-                                <label for="selling_percent">Selling Percent</label>
-                                <input type="number" step="0.01" name="selling_percent" class="form-control">
-                            </div> -->
+
                             <div class="form-group">
-                                <label for="buying_price_item">{% trans "Buying Price Per Item" %}</label>
-                                <input type="number" step="0.01" name="buying_price_item" class="form-control">
+                                <label for="pack_weight">{% trans "Pack Weight (e.g., 1 kg per pack)" %} *</label>
+                                <input type="number" name="pack_weight" id="pack_weight" class="form-control" step="0.01" min="0.01">
                             </div>
-                            <!-- <div class="form-group">
-                                <label for="buying_percent">Buying Percent</label>
-                                <input type="number" step="0.01" name="buying_percent" class="form-control">
-                            </div> -->
+
+                            <div class="form-group">
+                                <label>{% trans "Auto-calculated Number of Parcels" %}</label>
+                                <input type="text" name= number_of_parcel id="num_parcels_display" class="form-control" readonly>
+                            </div>
+
+                            <div class="form-group">
+                                <label>{% trans "Auto-calculated Number of Packs" %}</label>
+                                <input type="text" id="num_packs_display" class="form-control" readonly>
+                                <input type="hidden" name="stock_quantity" id="stock_quantity">
+                            </div>
+
+                            <hr>
+                            <h5><b>{% trans "Pricing Details" %}</b></h5>
+
+                            <div class="form-group">
+                                <label for="price_per_item">{% trans "Selling Price Per Pack" %}</label>
+                                <input type="number" name="price_per_item" class="form-control" step="0.01">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="buying_price_item">{% trans "Buying Price Per Pack" %}</label>
+                                <input type="number" name="buying_price_item" class="form-control" step="0.01">
+                            </div>
+
                             <div class="form-group">
                                 <label for="dated_order">{% trans "Date" %}</label>
                                 <input type="date" name="dated_order" class="form-control">
                             </div>
+
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary btn-block">{% trans "Save" %}</button>
                             </div>
+
                         </form>
                     </div>
                 </div>
@@ -71,5 +102,39 @@
         </div>
     </section>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const bulkQuantityInput = document.getElementById('bulk_quantity');
+        const parcelWeightInput = document.getElementById('parcel_weight');
+        const packWeightInput = document.getElementById('pack_weight');
+        const numParcelsDisplay = document.getElementById('num_parcels_display');
+        const numPacksDisplay = document.getElementById('num_packs_display');
+        const hiddenStockInput = document.getElementById('stock_quantity');
+
+        function calculatePackaging() {
+            const bulkQty = parseFloat(bulkQuantityInput.value);
+            const parcelW = parseFloat(parcelWeightInput.value);
+            const packW = parseFloat(packWeightInput.value);
+
+            if (!isNaN(bulkQty) && bulkQty > 0 && !isNaN(parcelW) && parcelW > 0 && !isNaN(packW) && packW > 0) {
+                const totalWeight = bulkQty * parcelW;
+                const numberOfPacks = Math.floor(totalWeight / packW);
+
+                numParcelsDisplay.value = bulkQty;
+                numPacksDisplay.value = numberOfPacks;
+                hiddenStockInput.value = numberOfPacks;
+            } else {
+                numParcelsDisplay.value = '';
+                numPacksDisplay.value = '';
+                hiddenStockInput.value = '';
+            }
+        }
+
+        bulkQuantityInput.addEventListener('input', calculatePackaging);
+        parcelWeightInput.addEventListener('input', calculatePackaging);
+        packWeightInput.addEventListener('input', calculatePackaging);
+    });
+</script>
 
 {% endblock %}

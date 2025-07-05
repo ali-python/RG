@@ -219,18 +219,13 @@ class ShopMonthlyReports(TemplateView):
             month_range = monthrange(
                 date_month.year, date_month.month
             )
-            start_month = datetime.datetime(
-                date_month.year, date_month.month, 1)
-
-            end_month = datetime.datetime(
-                date_month.year, date_month.month, month_range[1]
-            )
+            start_month = datetime.datetime(date_month.year, date_month.month, 1)
+            end_month = datetime.datetime(date_month.year, date_month.month, month_range[1], 23, 59, 59)
 
             invoice = ShopInvoice.objects.filter(
-                date__gt=start_month,
-                date__lt=end_month.replace(
-                    hour=23, minute=59, second=59))
-
+                date__gte=start_month,
+                date__lte=end_month
+            )
             if invoice.exists():
                 commission = invoice.aggregate(
                     Sum('grand_total'))

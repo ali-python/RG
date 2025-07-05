@@ -67,7 +67,7 @@
                                     {% for result in results %}
                                         {% if not result.grand_total == 0 %}
                                             <tr>
-                                                <td>{{ result.date }}</td>
+                                                <td>{{ result.date }}--</td>
                                                 <td>{{ result.total_customer }}</td>
                                                 <td>{{ result.total_quantity|floatformat:-2 }}</td>
                                                 <td>{{ result.grand_total|floatformat:'-2' }}</td>

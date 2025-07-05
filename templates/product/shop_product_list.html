@@ -45,8 +45,10 @@
                                     <th>{% trans "Name" %}</th>
                                     <th>{% trans "Category" %}</th>
                                     <!-- <th>Notify Quantity</th> -->
-                                    <th>{% trans "Total Quantity" %}</th>
-                                    <th>{% trans "Available Item" %}</th>
+                                    <th>{% trans "Total Quantity From Store" %}</th>
+                                    <th>{% trans "Available Item Bulk" %}</th>
+                                    <th>Total Pack</th>
+                                    <th>Available Pack </th>
                                     <th class="text-center">{% trans "Action" %}</th>
                                 </tr>
                                 </thead>
@@ -58,7 +60,10 @@
                                     <td>{{product.original_product.category|title}}</td>
                                     <!-- <td>{{product.notify_qty|floatformat:-2}}</td> -->
                                     <td>{{product.total_items|floatformat:-2}}</td>
+                                    
                                     <td>{{product.product_available_items|floatformat:-2}}</td>
+                                    <td>{{product.total_pack|floatformat:-2}}</td>
+                                    <td>{{product.product_available_pack|floatformat:-2}}</td>
                                     <td class="text-center">
                                         <a href="{% url 'product:update' pk=product.id %}"><button class="btn btn-primary btn-xs">{% trans "Update" %}</button></a>
                                         <a href="{% url 'product:shop_stockin_detail' pk=product.id %}"><button class="btn btn-success btn-xs"> {% trans "Stock In" %}</button></a>

@@ -154,6 +154,15 @@ class ShopProduct(models.Model):
             stock_in = 0
 
         return stock_in
+    
+    def total_pack(self):
+        try:
+            obj_stock_in = self.shop_stocks.aggregate(Sum('bulk_quantity_quantity'))
+            stock_in = float(obj_stock_in.get('bulk_quantity_quantity__sum'))
+        except:
+            stock_in = 0
+
+        return stock_in
 
     def product_available_items(self):
         try:
@@ -170,9 +179,28 @@ class ShopProduct(models.Model):
 
         return stock_in - stock_out
     
+    def product_available_pack(self):
+        try:
+            obj_stock_in = self.shop_stocks.aggregate(Sum('bulk_quantity_quantity'))
+            stock_in = float(obj_stock_in.get('bulk_quantity_quantity__sum'))
+        except:
+            stock_in = 0
+        try:
+            obj_stock_out = self.shop_stockout_product.aggregate(
+                Sum('stock_out_quantity'))
+            stock_out = float(obj_stock_out.get('stock_out_quantity__sum'))
+        except:
+            stock_out = 0
+
+        return stock_in - stock_out
+    
 class ShopStockIn(models.Model):
     shop_product = models.ForeignKey(ShopProduct, on_delete=models.CASCADE, related_name='shop_stocks')
     stock_quantity = models.CharField(max_length=200, null=True, blank=True)
+    bulk_quantity_quantity = models.CharField(max_length=200, null=True, blank=True)
+    parcel_weight = models.CharField(max_length=200, null=True, blank=True)
+    pack_weight = models.CharField(max_length=200, null=True, blank=True)
+    number_of_parcel = models.CharField(max_length=200, null=True, blank=True)
     price_per_item = models.DecimalField(max_digits=65, decimal_places=2, default=0,
                                          null=True, blank=True)
     total_amount = models.DecimalField(max_digits=65, decimal_places=2, default=0,
