@@ -2,7 +2,6 @@
 {% block sales %}active{% endblock %}
 {% block invoice_list %}active{% endblock %}
 {% load i18n %}
-
 {% load staticfiles %}
 {% block content %}
 
@@ -11,7 +10,6 @@
         size: 80mm auto;
         margin: 0;
     }
-
     body {
         width: 80mm !important;
         margin: 0 !important;
@@ -21,48 +19,12 @@
         line-height: 1.2;
         color: #000;
     }
-
-    .no-print, .print-invoice-btn, .breadcrumb,
+    .no-print, .print-invoice-btn, .print-a4-btn, .breadcrumb,
     .box-header, .box-footer, .content-wrapper {
         display: none !important;
     }
-
     .print-invoice {
         width: 100%;
-    }
-
-    .text-center {
-        text-align: center;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 5px;
-    }
-
-    th, td {
-        padding: 2px 0;
-        text-align: left;
-    }
-
-    hr {
-        border: none;
-        border-top: 1px dashed #000;
-        margin: 5px 0;
-    }
-
-    .thermal-header {
-        font-weight: bold;
-        text-align: center;
-        margin-bottom: 5px;
-    }
-
-    .thermal-cut {
-        height: 10px;
-        margin-top: 10px;
-        border-top: 1px dashed #000;
-        page-break-after: always;
     }
 </style>
 
@@ -73,7 +35,11 @@
         </a>
 
         <button type="button" class="btn btn-primary print-invoice-btn" onclick="printThermalInvoice()">
-            {% trans "Print Invoice" %}
+            {% trans "Print Thermal" %}
+        </button>
+
+        <button type="button" class="btn btn-secondary print-a4-btn" onclick="printA4Invoice()">
+            {% trans "Print A4 Invoice" %}
         </button>
 
         <ol class="breadcrumb">
@@ -94,7 +60,6 @@
                     {% if invoice.customer %}
                         <p><strong>{% trans "Customer" %}:</strong> {{ invoice.customer.name|upper }}</p>
                         <p><strong>{% trans "Mobile" %}:</strong> {{ invoice.customer.mobile }}</p>
-                        <!-- <p><strong>{% trans "CNIC" %}:</strong> {{ invoice.customer.cnic }}</p> -->
                     {% endif %}
 
                     <p><strong>{% trans "Date" %}:</strong> {{ invoice.date|date:"d-m-Y" }}</p>
@@ -188,6 +153,37 @@ function printThermalInvoice() {
                 table { width: 100%; border-collapse: collapse; }
                 th, td { padding: 2px 0; }
                 .thermal-cut { height: 10px; page-break-after: always; border-top: 1px dashed #000; }
+            </style>
+        </head>
+        <body onload="window.print(); setTimeout(() => window.close(), 300);">
+            ${content}
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+}
+
+function printA4Invoice() {
+    const content = document.getElementById('print-invoice').innerHTML;
+    const printWindow = window.open('', '', 'width=800,height=900');
+
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Invoice #{{ invoice.id }}</title>
+            <style>
+                body {
+                    margin: 20px;
+                    font-family: Arial, sans-serif;
+                    font-size: 14px;
+                    line-height: 1.4;
+                    color: #000;
+                }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { padding: 6px; border: 1px solid #ddd; }
+                h3, p { margin: 0 0 5px; }
+                hr { border: none; border-top: 1px solid #000; margin: 10px 0; }
             </style>
         </head>
         <body onload="window.print(); setTimeout(() => window.close(), 300);">
