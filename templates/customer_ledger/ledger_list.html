@@ -3,64 +3,92 @@
 {% block customer_list %}active{% endblock %}
 {% block content %}
 {% load i18n %}
-
 {% load staticfiles %}
+
+<style>
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    .print-only {
+        display: block !important;
+    }
+}
+@media screen {
+    .print-only {
+        display: none;
+    }
+}
+</style>
+
 <div class="content-wrapper">
-    <section class="content-header">
-        <a href="{% url 'customer:ledger_debit' pk=customer.id %}"><button type="button" value="Create" class="btn btn-success">{% trans "Add Ledger" %}</button></a>
-        <a href="{% url 'customer:ledger_credit' pk=customer.id %}"><button type="button" value="Create" class="btn btn-danger">{% trans "Pay Ledger" %}</button></a>
+    <section class="content-header no-print">
+        <a href="{% url 'customer:ledger_debit' pk=customer.id %}"><button type="button" class="btn btn-success">{% trans "Add Ledger" %}</button></a>
+        <a href="{% url 'customer:ledger_credit' pk=customer.id %}"><button type="button" class="btn btn-danger">{% trans "Pay Ledger" %}</button></a>
+        <a href="#" onclick="window.print(); return false;">
+            <button type="button" class="btn btn-info">{% trans "Print Ledger" %}</button>
+        </a>
         <ol class="breadcrumb">
             <li><a href="{% url 'common:index' %}"><i class="fa fa-dashboard"></i> {% trans "Home" %}</a></li>
             <li><a href="{% url 'customer:list' %}"> {% trans "Customer List" %}</a></li>
             <li class="active">{% trans "Ledger" %}</li>
         </ol>
     </section>
+
     <section class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="box">
+
+                <!-- Screen Table -->
+                <div class="box no-print">
                     <div class="box-header">
                         <h3 class="text-center"><b>{{ customer.name|title }} |</b> <small><b>{% trans "Ledger Statement" %}</b></small></h3>
+                        <h3 style="color: red;"><b>Unpaid Amount: {{total_unpaid_amount}}</b></h3>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="col-md-4 pull-left">
-                                <input type="date" class="form-control date_search" placeholder="Search by Date ..." >
+                                <input type="date" class="form-control date_search" placeholder="Search by Date ...">
                             </div>
                             <div class="col-md-2 pull-right">
                                 <button class="form-control btn btn-primary search">{% trans "Search" %}</button>
                             </div>
-                        <br><br>
-                        <hr>
+                            <br><br>
+                            <hr>
                         </div>
                     </div>
                     <div class="box-body">
                         <div class="table-responsive">
                             <table class="table align-items-center table-striped table-bordered table-hover">
                                 <thead class="thead-dark">
-                                <tr>
-                                    <th>{% trans "Date" %}</th>
-                                    <th>{% trans "Detail" %}</th>
-                                    <th><small>{% trans "Debit/Ledger Amount" %}</small></th>
-                                    <th><small>{% trans "Credit/Payment Amount" %}</small></th>
-                                </tr>
+                                    <tr>
+                                        <th>{% trans "Date" %}</th>
+                                        <th>{% trans "Detail" %}</th>
+                                        <th><small>{% trans "Debit/Ledger Amount" %}</small></th>
+                                        <th><small>{% trans "Credit/Payment Amount" %}</small></th>
+                                        <th>Action</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                {% for ledger in object_list %}
-                                <tr>
-                                    {% load humanize %}
-                                    <td>{{ledger.date}}</td>
-                                    <td>{{ledger.details}}</td>
-                                    <td>{{ledger.debit_amount|floatformat:-2|intcomma }}</td>
-                                    <td>{{ledger.credit_amount|floatformat:-2|intcomma }}</td>
-                                </tr>
-                                {% endfor %}
+                                    {% for ledger in object_list %}
+                                    <tr>
+                                        {% load humanize %}
+                                        <td>{{ledger.date}}</td>
+                                        <td>{{ledger.details}}</td>
+                                        <td>{{ledger.debit_amount|floatformat:-2|intcomma }}</td>
+                                        <td>{{ledger.credit_amount|floatformat:-2|intcomma }}</td>
+                                        <td>
+                                            <a href="{% url 'customer:ledger_update' pk=ledger.id %}"><button type="button" class="btn btn-success">Update Debit</button></a>
+                                            <a href="{% url 'customer:ledger_credit_update' pk=ledger.id %}"><button type="button" class="btn btn-danger">Update Credit</button></a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                             {% if paginator.page_range|length > 1 %}
                             <div class="text-center col-lg-12">
                                 <ul class="pagination justify-content-center">
-                                    <li><a  style="background-color: #3070A8; color: white" class="page_previous" href="{% if page_obj.has_previous %}{% url 'customer:ledger_list' pk=customer.id %}?page={{ page_obj.previous_page_number }}{% else %}#{% endif %}" title="Previous"><<</a></li>
+                                    <li><a style="background-color: #3070A8; color: white" class="page_previous" href="{% if page_obj.has_previous %}{% url 'customer:ledger_list' pk=customer.id %}?page={{ page_obj.previous_page_number }}{% else %}#{% endif %}" title="Previous"><<</a></li>
                                     <li><a style="background-color: #3070A8; color: white" class="page_next" href="{% if page_obj.has_next %}{% url 'customer:ledger_list' pk=customer.id %}?page={{ page_obj.next_page_number }}{% else %}#{% endif %}" title="Next">>></a></li>
                                 </ul>
                             </div>
@@ -68,6 +96,35 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Printable Table -->
+                <div class="print-only">
+                    <h3 class="text-center"><b>{{ customer.name|title }} |</b> <small><b>{% trans "Ledger Statement" %}</b></small></h3>
+                    <h3 style="color: red;"><b>Unpaid Amount: {{total_unpaid_amount}}</b></h3>
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-striped table-bordered table-hover">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>{% trans "Date" %}</th>
+                                    <th>{% trans "Detail" %}</th>
+                                    <th><small>{% trans "Debit/Ledger Amount" %}</small></th>
+                                    <th><small>{% trans "Credit/Payment Amount" %}</small></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ledger in object_list %}
+                                <tr>
+                                    <td>{{ledger.date}}</td>
+                                    <td>{{ledger.details}}</td>
+                                    <td>{{ledger.debit_amount|floatformat:-2|intcomma }}</td>
+                                    <td>{{ledger.credit_amount|floatformat:-2|intcomma }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
@@ -76,12 +133,12 @@
 
 {% block script %}
     {{ block.super }}
-<script>
-$(function () {
-    $('.search').on('click', function () {
-        var url = '{% url "customer:ledger_list" pk=customer.id %}';
-        window.location.href  = url + '?' + 'date=' + $('.date_search').val();
-    });
-})
-</script>
+    <script>
+    $(function () {
+        $('.search').on('click', function () {
+            var url = '{% url "customer:ledger_list" pk=customer.id %}';
+            window.location.href = url + '?' + 'date=' + $('.date_search').val();
+        });
+    })
+    </script>
 {% endblock %}

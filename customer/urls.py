@@ -2,7 +2,7 @@ from django.urls import path
 from customer.views import (
     AddCustomer, CustomerList, UpdateCustomer,
     CustomerLedgerListView, DebitCustomerLedgerFormView,
-    CreditCustomerLedgerFormView,
+    CreditCustomerLedgerFormView,CustomerLedgerUpdateView, CustomerLedgerCreditUpdateView
 )
 
 urlpatterns = [
@@ -24,4 +24,7 @@ urlpatterns = [
         CreditCustomerLedgerFormView.as_view(),
         name='ledger_credit'
     ),
+    path('ledger/update/<int:pk>/', CustomerLedgerUpdateView.as_view(), name='ledger_update'),
+    path('ledger/credit/update/<int:pk>/', CustomerLedgerCreditUpdateView.as_view(), name='ledger_credit_update'),
+
 ]

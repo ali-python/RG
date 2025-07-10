@@ -97,6 +97,7 @@ class UpdateCustomer(UpdateView):
         })
         return context
 
+from django.db import models
 
 class CustomerLedgerListView(ListView):
     model = CustomerLedger
@@ -134,8 +135,16 @@ class CustomerLedgerListView(ListView):
         except Customer.DoesNotExist:
             raise Http404('Customer does not exits!')
 
+        # Calculate total debit and credit
+        ledgers = CustomerLedger.objects.filter(customer=customer)
+        total_debit = ledgers.aggregate(total=models.Sum('debit_amount'))['total'] or 0
+        total_credit = ledgers.aggregate(total=models.Sum('credit_amount'))['total'] or 0
+
+        unpaid_amount = total_debit - total_credit
+
         context.update({
-            'customer': customer
+            'customer': customer,
+            'total_unpaid_amount': unpaid_amount
         })
         return context
 
@@ -194,4 +203,61 @@ class CreditCustomerLedgerFormView(DebitCustomerLedgerFormView):
         context.update({
             'customer': customer
         })
+        return context
+
+
+class CustomerLedgerUpdateView(UpdateView):
+    model = CustomerLedger
+    form_class = CustomerLedgerForm
+    template_name = 'customer_ledger/debit_update.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse('common:login'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_object(self, queryset=None):
+        try:
+            obj = CustomerLedger.objects.get(pk=self.kwargs.get('pk'))
+        except CustomerLedger.DoesNotExist:
+            raise Http404('Ledger entry does not exist!')
+        return obj
+
+    def form_valid(self, form):
+        obj = form.save()
+        return HttpResponseRedirect(
+            reverse('customer:ledger_list', kwargs={'pk': obj.customer.id})
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        ledger_entry = self.get_object()
+        context['customer'] = ledger_entry.customer
+        return context
+
+class CustomerLedgerCreditUpdateView(CustomerLedgerUpdateView):
+    template_name = 'customer_ledger/credit_update.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse('common:login'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_object(self, queryset=None):
+        try:
+            obj = CustomerLedger.objects.get(pk=self.kwargs.get('pk'))
+        except CustomerLedger.DoesNotExist:
+            raise Http404('Ledger entry does not exist!')
+        return obj
+
+    def form_valid(self, form):
+        obj = form.save()
+        return HttpResponseRedirect(
+            reverse('customer:ledger_list', kwargs={'pk': obj.customer.id})
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        ledger_entry = self.get_object()
+        context['customer'] = ledger_entry.customer
         return context
