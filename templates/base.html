@@ -5,7 +5,7 @@
     <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{% trans "Radi Gull Traders" %}</title>
+    <title>{% trans "Itefaq Traders" %}</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'bower_components/font-awesome/css/font-awesome.min.css' %}">
@@ -40,8 +40,8 @@
 <div class="wrapper">
     <header class="main-header">
         <a href="#" class="logo">
-            <span class="logo-mini"><b>{% trans "RG" %}</b></span>
-            <span class="logo-lg"><b>{% trans "RG Traders" %}</b></span>
+            <span class="logo-mini"><b>{% trans "IT" %}</b></span>
+            <span class="logo-lg"><b>{% trans "IT Traders" %}</b></span>
         </a>
 
         <nav class="navbar navbar-static-top" style="background-color: #3c8dbc;">
@@ -51,7 +51,7 @@
         </a>
 
         <div class="title-container">
-            <h4><b>{% trans "Radi Gull Traders" %}</b></h4>
+            <h4><b>{% trans "Itefaq Traders" %}</b></h4>
             <h4><b>{% trans "User" %}: {{ request.user.username|title }}</b></h4>
         </div>
 
@@ -123,7 +123,7 @@
                 <span style=" color:aliceblue">Permission Denied</span>
                 {% endif %}
                 {% if request.user.is_authenticated and request.user.user_profile.user_type == "admin" or request.user.user_profile.user_type == "staff"  %}                    <a href="#">
-                <li class="treeview {% block shop_product %}{% endblock %}">
+                <!-- <li class="treeview {% block shop_product %}{% endblock %}">
                     <a href="#">
                         <i class="fa fa-product-hunt"></i> <span>{% trans "Shop Product" %}</span>
                         <span class="pull-right-container">
@@ -134,7 +134,7 @@
                         <li class="{% block shop_add_product %}{% endblock %}"><a href="{% url 'product:add_shop_product' %}"><i class="fa fa-circle-o"></i>{% trans "Add Shop Product / Stock In" %}</a></li>
                         <li class="{% block shop_add_product_list %}{% endblock %}"><a href="{% url 'product:shop_list' %}"><i class="fa fa-circle-o"></i>{% trans "Shop Product List" %}</a></li>
                     </ul>
-                </li>
+                </li> -->
                 {% else %}
                 <span style="color:aliceblue">Permission Denied</span>
                 {%endif%}
@@ -191,7 +191,7 @@
                         <li class="{% block invoice_list %}{% endblock %}"><a href="{% url 'sales:invoice_list' %}"><i class="fa fa-circle-o"></i>{% trans "Invoices List" %}</a></li>
                     </ul>
                 </li>
-                <li class="treeview {% block shop_sales %}{% endblock %}">
+                <!-- <li class="treeview {% block shop_sales %}{% endblock %}">
                     <a href="#">
                         <i class="fa fa-shopping-cart"></i> <span>{% trans "Shop Sales" %}</span>
                         <span class="pull-right-container">
@@ -202,7 +202,7 @@
                         <li class="{% block shop_create_invoice %}{% endblock %}"><a href="{% url 'sales:shop_invoice_create' %}"><i class="fa fa-circle-o"></i> <span>{% trans "Shop Create Invoice" %}</span></a></li>
                         <li class="{% block shop_invoice_list %}{% endblock %}"><a href="{% url 'sales:shop_invoice_list' %}"><i class="fa fa-circle-o"></i>{% trans "Shop Invoices List" %}</a></li>
                     </ul>
-                </li>
+                </li> -->
                 {% if request.user.is_authenticated and request.user.user_profile.user_type == "admin"%}
                 <li class="header">{% trans "Logs & Reports" %}</li>
                 <li class="treeview {% block stock_logs %}{% endblock %}">
@@ -228,7 +228,7 @@
                         <li class="{% block monthly_reports %}{% endblock %}"><a href="{% url 'common:reports' %}"><i class="fa fa-circle-o"></i> <span>{% trans "Monthly Reports" %}</span></a></li>
                     </ul>
                 </li>
-                <li class="header">{% trans "Shop Logs & Reports" %}</li>
+                <!-- <li class="header">{% trans "Shop Logs & Reports" %}</li>
                 <li class="treeview {% block shop_stock_logs %}{% endblock %}">
                     <a href="#">
                         <i class="fa fa-history"></i> <span>{% trans "Shop Stock Logs" %}</span>
@@ -240,8 +240,8 @@
                         <li class="{% block shop_daily_stock_logs %}{% endblock %}"><a href="{% url 'common:shop_daily_logs' %}"><i class="fa fa-circle-o"></i> <span>{% trans "Daily Logs" %}</span></a></li>
                         <li class="{% block shop_monthly_stock_logs %}{% endblock %}"><a href="{% url 'common:shop_monthly_logs' %}"><i class="fa fa-circle-o"></i>{% trans "Monthly Logs" %}</a></li>
                     </ul>
-                </li>
-                <li class="treeview {% block shop_reports %}{% endblock %}">
+                </li> -->
+                <!-- <li class="treeview {% block shop_reports %}{% endblock %}">
                     <a href="#">
                         <i class="fa fa-copy"></i> <span>{% trans "Shop Reports" %}</span>
                         <span class="pull-right-container">
@@ -251,11 +251,11 @@
                     <ul class="treeview-menu">
                         <li class="{% block shop_monthly_reports %}{% endblock %}"><a href="{% url 'common:shop_reports' %}"><i class="fa fa-circle-o"></i> <span>{% trans "Monthly Reports" %}</span></a></li>
                     </ul>
-                </li>
+                </li> -->
                 {% else %}
                 <span style="color:aliceblue">Permission Denied</span>
                 {% endif %}
-                <li class="treeview {% block bill_checker %}{% endblock %}">
+                <!-- <li class="treeview {% block bill_checker %}{% endblock %}">
                     <a href="#">
                         <i class="fa fa-copy"></i> <span>{% trans "Bill Checker" %}</span>
                         <span class="pull-right-container">
@@ -265,7 +265,7 @@
                     <ul class="treeview-menu">
                         <li class="{% block bill_checker_act %}{% endblock %}"><a href="{% url 'sales:billchecker_page' %}"><i class="fa fa-circle-o"></i> <span>{% trans "Bill Check" %}</span></a></li>
                     </ul>
-                </li>
+                </li> -->
                 <li class="header">{% trans "User" %}</li>
                 <li>
                     <a href="{% url 'common:logout' %}"><i class="fa fa-sign-out"></i> <span>{% trans "Logout" %}</span></a>
@@ -283,7 +283,7 @@
         <div class="pull-right hidden-xs">
             <b>{% trans "Version" %}</b> 2.4.18
         </div>
-        <strong>{% trans "Copyright" %} &copy; 2022 <a href="#">{% trans "Radi Gull Traders" %}</a>.</strong> {% trans "All rights reserved." %}
+        <strong>{% trans "Copyright" %} &copy; 2022 <a href="#">{% trans "Itefaq Traders" %}</a>.</strong> {% trans "All rights reserved." %}
     </footer>
 </div>
 
