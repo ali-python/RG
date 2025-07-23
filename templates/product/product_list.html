@@ -5,6 +5,23 @@
 {% load i18n %}
 
 {% load static %}
+<style>
+/* Hide print table on screen */
+.d-none-for-screen {
+    display: none;
+}
+
+/* Show only in print */
+@media print {
+    .d-none-for-screen {
+        display: block;
+    }
+
+    .content-wrapper, .breadcrumb, .search, .btn, nav, footer {
+        display: none !important;
+    }
+}
+</style>
 
 <div class="content-wrapper">
     <section class="content-header">
@@ -14,6 +31,29 @@
         </ol>
     </section>
     <br>
+    <div id="printable-product-table" class="d-none-for-screen">
+    <table class="table align-items-center table-striped table-bordered table-hover">
+        <thead class="thead-dark">
+        <tr>
+            <th>{% trans "Name" %}</th>
+            <th>{% trans "Category" %}</th>
+            <th>{% trans "Total Quantity" %}</th>
+            <th>{% trans "Available Item" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for product in object_list %}
+        <tr>
+            <td>{{ product.name|title }}</td>
+            <td>{{ product.category|title }}</td>
+            <td>{{ product.total_items|floatformat:-2 }}</td>
+            <td>{{ product.product_available_items|floatformat:-2 }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
     <section class="content">
         <div class="row">
             <div class="col-md-12 form-group">
@@ -31,8 +71,10 @@
                                 <input type="text" class="form-control category_search" placeholder="Search by Category ...">
                             </div>
                             <div class="col-md-2 pull-right">
+                                <button class="form-control btn btn-danger" onclick="printProductTable()">{% trans "Print Product List" %}</button><br?
                                 <button class="form-control btn btn-primary search">{% trans "Search" %}</button>
                             </div>
+         
                             <br><br>
                             <hr>
                         </div>
@@ -90,6 +132,51 @@
 
 {% block script %}
     {{ block.super }}
+    <script>
+function printProductTable() {
+    const content = document.getElementById('printable-product-table').innerHTML;
+    const printWindow = window.open('', '', 'width=900,height=700');
+
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Product List</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    padding: 20px;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 10px;
+                }
+                th, td {
+                    border: 1px solid #ccc;
+                    padding: 6px;
+                    text-align: left;
+                }
+                th {
+                    background-color: #f0f0f0;
+                }
+                h2 {
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
+            </style>
+        </head>
+        <body onload="window.print(); setTimeout(() => window.close(), 300);">
+            <h2>Product List</h2>
+            ${content}
+        </body>
+        </html>
+    `);
+
+    printWindow.document.close();
+}
+</script>
+
 <script>
 $(function () {
     $('.search').on('click', function () {

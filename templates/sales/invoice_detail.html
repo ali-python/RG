@@ -93,33 +93,38 @@
                     <hr>
 
                     <table>
-                        <tr>
-                            <td><strong>{% trans "Total Qty" %}:</strong></td>
-                            <td>{{ invoice.total_quantity }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>{% trans "Grand Total" %}:</strong></td>
-                            <td>{{ invoice.grand_total|floatformat:-2 }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>{% trans "Cash Payment" %}:</strong></td>
-                            <td>{{ invoice.cash_payment|floatformat:-2 }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>{% trans "Received Amount" %}:</strong></td>
-                            <td>{{ invoice.paid_amount|floatformat:-2 }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>{% trans "Remaining Amount" %}:</strong></td>
-                            <td>{{ invoice.remaining_payment|floatformat:-2 }}</td>
-                        </tr>
-                    </table>
+    <tr>
+        <td><strong>{% trans "Total Qty" %}:</strong></td>
+        <td>{{ invoice.total_quantity }}</td>
+    </tr>
+    <tr>
+        <td><strong>{% trans "Grand Total" %}:</strong></td>
+        <td>{{ invoice.grand_total|floatformat:-2 }}</td>
+    </tr>
+    <tr>
+        <td><strong>{% trans "Cash Payment" %}:</strong></td>
+        <td>{{ invoice.cash_payment|floatformat:-2 }}</td>
+    </tr>
+    <tr>
+        <td><strong>{% trans "Received Amount" %}:</strong></td>
+        <td>{{ invoice.paid_amount|floatformat:-2 }}</td>
+    </tr>
+    <tr>
+    <td><strong>{% trans "Remaining Amount (This Invoice)" %}:</strong></td>
+    <td>{{ invoice.remaining_payment|floatformat:-2 }}</td>
+</tr>
+<tr>
+    <td><strong>{% trans "Total Unpaid (Ledger)" %}:</strong></td>
+    <td><strong style="color:red;">{{ unpaid_amount|floatformat:-2 }}</strong></td>
+</tr>
+</table>
 
-                    {% if invoice.barcode_image %}
+
+                    <!-- {% if invoice.barcode_image %}
                         <div class="text-center" style="margin-top: 8px;">
                             <img src="{{ invoice.barcode_image.url }}" alt="Invoice Barcode" width="180" height="50">
                         </div>
-                    {% endif %}
+                    {% endif %} -->
 
                     <div class="text-center" style="margin-top: 8px;">
                         <span><b>User:</b> {{request.user.username|title}}</span>

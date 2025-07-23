@@ -471,8 +471,10 @@ class InvoiceDetailTemplateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(InvoiceDetailTemplateView, self).get_context_data(**kwargs)
         invoice = Invoice.objects.get(id=self.kwargs.get('pk'))
+        unpaid_amount = invoice.customer.get_unpaid_amount() if invoice.customer else 0
         context.update({
-            'invoice': invoice
+            'invoice': invoice,
+            'unpaid_amount': unpaid_amount
         })
         return context
 
