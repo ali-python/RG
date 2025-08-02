@@ -8,7 +8,7 @@ def print_receipt(invoice):
         p = Usb(0x0416, 0x5011, 0, timeout=0, in_ep=0x82, out_ep=0x01)
 
         p.set(align='center', width=2)
-        p.text("ReydiGull Traders\n")
+        p.text("RadiGull Traders\n")
         p.text("--------- Invoice ---------\n\n")
 
         p.set(align='left', width=1)

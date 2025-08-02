@@ -320,7 +320,7 @@ class BillChecker(models.Model):
     store_invoice = models.ForeignKey(
         Invoice, related_name='store_invoice_checker', on_delete=models.CASCADE, null=True, blank=True)
     shop_invoice = models.ForeignKey(
-        Invoice, related_name='shop_invoice_checker', on_delete=models.CASCADE, null=True, blank=True)
+        ShopInvoice, related_name='shop_invoice_checker', on_delete=models.CASCADE, null=True, blank=True)
     store_invoice_check = models.BooleanField(default=False)
     shop_invoice_check = models.BooleanField(default=False)
     created_at = models.DateField(default=timezone.now)

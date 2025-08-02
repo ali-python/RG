@@ -92,7 +92,7 @@ def thermal_print(request, pk):
 
         # === Print Header ===
         printer.set(align='center', bold=True, width=2, height=2)
-        printer.text("ReydiGull Traders\n")
+        printer.text("RadiGull Traders\n")
 
         printer.set(align='center', bold=False, width=1, height=1)
         printer.text("Invoice No: {:07d}\n".format(invoice.id))
@@ -756,10 +756,10 @@ class ShopGenerateInvoiceAPIView(View):
             if customer_id:
                 invoice.customer = customer
                 invoice.save()
-                invoice_id = Invoice.objects.get(id=invoice.id)
-                BillChecker.objects.create(
-                    store_invoice = invoice_id
 
+                # Pass the ShopInvoice instance directly to BillChecker
+                BillChecker.objects.create(
+                    shop_invoice=invoice  # No need to query Invoice separately
                 )
             for item in items:
                 product = ShopProduct.objects.get(id=item.get('item_id'))

@@ -20,3 +20,4 @@
 
 /partum_trading/settings_local.py
 db.local
+db.sqlite3
